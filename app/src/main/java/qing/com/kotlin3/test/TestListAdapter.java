@@ -1,13 +1,14 @@
 package qing.com.kotlin3.test;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.posun.lightui.recyclerview.LightFormAdapterManager;
 
 import qing.com.kotlin3.R;
-import qing.com.kotlin3.lib.LightFormAdapterManager;
 
 /**
  * package Kotlin3:qing.com.kotlin3.test.TestListAdapter.class
@@ -15,7 +16,7 @@ import qing.com.kotlin3.lib.LightFormAdapterManager;
  * 邮箱：zyq@posun.com
  */
 
-public class TestListAdapter extends LightFormAdapterManager.LightListAdapter<TestListAdapter.TestHolder> {
+public class TestListAdapter extends LightFormAdapterManager.LightListAdapter {
     @Override
     public int getItemCount() {
         return 150;
@@ -23,19 +24,25 @@ public class TestListAdapter extends LightFormAdapterManager.LightListAdapter<Te
 
     @Override
     public int getViewType(int position) {
-        return 0;
+        return position % 2;
     }
 
     @Override
-    public TestHolder getView(ViewGroup viewGroup) {
+    public LightFormAdapterManager.ChildHolder getView(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_layout, viewGroup, false);
-        return new TestHolder(view);
+        if (viewType == 1) {
+            return new TestHolder(view);
+        }
+        return new TestHolder1(view);
     }
 
-
     @Override
-    public void bindView(ViewGroup viewGroup, TestHolder holder, int position) {
-        holder.textView.setText(position + "");
+    public void bindView(ViewGroup viewGroup, LightFormAdapterManager.ChildHolder holder, int position) {
+        if (holder instanceof TestHolder) {
+            ((TestHolder) holder).textView.setText("" + position);
+        } else {
+            ((TestHolder1) holder).textView.setText("" + position);
+        }
     }
 
 
@@ -45,12 +52,23 @@ public class TestListAdapter extends LightFormAdapterManager.LightListAdapter<Te
         public TestHolder(View view) {
             super(view);
             textView = view.findViewById(R.id.item_t);
+            textView.setTextColor(Color.BLACK);
 //            textView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {
 //                    Toast.makeText(view.getContext(), "TestHolderPosition=" + getAdapterPosition(), Toast.LENGTH_SHORT).show();
 //                }
 //            });
+        }
+    }
+
+    class TestHolder1 extends LightFormAdapterManager.ChildHolder {
+        TextView textView;
+
+        public TestHolder1(View view) {
+            super(view);
+            textView = view.findViewById(R.id.item_t);
+            textView.setTextColor(Color.RED);
         }
     }
 }

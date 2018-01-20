@@ -5,8 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.posun.lightui.recyclerview.LightFormAdapterManager;
+
 import qing.com.kotlin3.R;
-import qing.com.kotlin3.lib.LightFormAdapterManager;
 
 /**
  * package Kotlin3:qing.com.kotlin3.test.TestListAdapter.class
@@ -15,7 +16,7 @@ import qing.com.kotlin3.lib.LightFormAdapterManager;
  */
 
 public class TestGradAdapter extends LightFormAdapterManager.LightGridAdapter<TestGradAdapter.TestHolder> {
-    int cont = 10;
+    int cont = 5;
 
     public TestGradAdapter(int spanCount) {
         super(spanCount);
@@ -40,7 +41,7 @@ public class TestGradAdapter extends LightFormAdapterManager.LightGridAdapter<Te
     }
 
     @Override
-    public TestHolder getView(ViewGroup viewGroup) {
+    public TestHolder getView(ViewGroup viewGroup,int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
         return new TestHolder(view);
     }

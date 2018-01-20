@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-<TextView
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="20dp"
-    android:text="1"
-    android:id="@+id/item_t"
-    android:gravity="center"
-    />
+    android:orientation="vertical">
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/colorAccent"
-        ></View>
-</android.support.constraint.ConstraintLayout>
+        android:background="@color/colorAccent"></View>
+
+    <TextView
+        android:id="@+id/item_t"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="1" />
+</LinearLayout>
