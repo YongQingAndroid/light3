@@ -20,6 +20,7 @@ import com.posun.lightui.richView.instent.SimpleClickExeCute;
 import com.posun.lightui.richView.view.LightBtnItemView;
 import com.posun.lightui.richView.view.LightCheckGroup;
 import com.posun.lightui.richView.view.LightItemGroupView;
+import com.posun.lightui.richView.view.LightRecyclerView;
 import com.posun.lightui.richView.view.LightSelectGroup;
 import com.posun.lightui.richView.view.LightTextInputView;
 
@@ -302,7 +303,7 @@ public abstract class LightRichActivityManager {
         public View getPraseUI(Context context) {
             getLightFormAdapterManager(context);
             if (recyclerView == null)
-                recyclerView = new RecyclerView(context);
+                recyclerView = new LightRecyclerView(context);
             for (LightFormAdapterManager.LightFormBaseAdapterInterface item : adapters) {
                 lightFormAdapterManager.addAdapter(item);
             }
