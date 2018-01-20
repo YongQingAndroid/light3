@@ -6,7 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import qing.com.kotlin3.lib.LightFormAdapterManager;
+import com.posun.lightui.recyclerview.LightFormAdapterManager;
+
 import qing.com.kotlin3.test.TestGradAdapter;
 import qing.com.kotlin3.test.TestListAdapter;
 
@@ -17,12 +18,13 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        final LightFormAdapterManager adapterManager = new LightFormAdapterManager();
+        final LightFormAdapterManager adapterManager = new LightFormAdapterManager(this);
         View titleView = getLayoutInflater().inflate(R.layout.fix_uilayout, null);
         LightFormAdapterManager.LightFixedAdapter fixedAdapter = new LightFormAdapterManager.LightFixedAdapter(titleView);
         adapterManager.addAdapter(fixedAdapter);
         final TestGradAdapter testGradAdapter = new TestGradAdapter(3);
         adapterManager.addAdapter(testGradAdapter);
+        adapterManager.addAdapter(new TestGradAdapter(4));
         adapterManager.addAdapter(new TestListAdapter());
         adapterManager.setRecyclerView(recyclerView);
 
