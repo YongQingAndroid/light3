@@ -21,6 +21,9 @@
 
         </activity>
         <activity android:name=".Main2Activity">
+
+        </activity>
+        <activity android:name=".test.LightRichActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
