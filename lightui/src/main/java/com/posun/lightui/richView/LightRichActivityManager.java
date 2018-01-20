@@ -2,10 +2,12 @@ package com.posun.lightui.richView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.posun.lightui.recyclerview.LightFormAdapterManager;
 import com.posun.lightui.richView.annotation.LightBtnItem;
 import com.posun.lightui.richView.annotation.LightCheckBox;
 import com.posun.lightui.richView.annotation.LightItemsGroups;
@@ -18,7 +20,6 @@ import com.posun.lightui.richView.instent.SimpleClickExeCute;
 import com.posun.lightui.richView.view.LightBtnItemView;
 import com.posun.lightui.richView.view.LightCheckGroup;
 import com.posun.lightui.richView.view.LightItemGroupView;
-import com.posun.lightui.richView.view.LightLinearLayout;
 import com.posun.lightui.richView.view.LightSelectGroup;
 import com.posun.lightui.richView.view.LightTextInputView;
 
@@ -36,7 +37,7 @@ import java.util.Map;
  */
 
 public abstract class LightRichActivityManager {
-    Map<LightUINB, LinearLayout> rootViewMap = new HashMap<>();
+    Map<LightUINB, LightFormBean> rootViewMap = new HashMap<>();
     private Object clazzobj;
     private List<ViewBean> views;
     private Map<Integer, LightItemGroupInterface> viewGroupCatch = new HashMap<>();
@@ -44,6 +45,8 @@ public abstract class LightRichActivityManager {
     public Object getDataobj() {
         return clazzobj;
     }
+
+    private Context context;
 
     /**
      * @param clazzobj
@@ -53,6 +56,7 @@ public abstract class LightRichActivityManager {
     public void initUIData(Object clazzobj, Activity context) throws Exception {
         this.clazzobj = clazzobj;
         Class clazz = clazzobj.getClass();
+        this.context = context;
 
         Field[] fields = clazz.getDeclaredFields();
         if (views == null)
@@ -62,8 +66,10 @@ public abstract class LightRichActivityManager {
         Collections.sort(views, new ViewComparable());
         addItemView(context);
         for (LightUINB itemLightUINB : rootViewMap.keySet()) {
-            if (itemLightUINB == LightUINB.ONE)/////
-                AddRichView(rootViewMap.get(itemLightUINB));
+            if (itemLightUINB == LightUINB.ONE) {
+                LightFormBean mLightFormBean = rootViewMap.get(itemLightUINB);
+                AddRichView(mLightFormBean.getPraseUI(context));
+            }
         }
     }
 
@@ -99,35 +105,66 @@ public abstract class LightRichActivityManager {
      * @param context
      */
     private void addItemView(Context context) {
-        LinearLayout typerootView = null;
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        LightItemGroupInterface itemsGroup = null;
-        LinearLayout.LayoutParams grouplayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LightFormBean mLightFormBean = null;
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams grouplayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i = 0; i < views.size(); i++) {
             ViewBean viewBean = views.get(i);
-            typerootView = rootViewMap.get(viewBean.getLightUINB().value());
-            if (typerootView == null) {
-                typerootView = new LightLinearLayout(context);
-                typerootView.setOrientation(LinearLayout.VERTICAL);
-                rootViewMap.put(viewBean.getLightUINB().value(), typerootView);
+            mLightFormBean = rootViewMap.get(viewBean.getLightUINB().value());
+            if (mLightFormBean == null) {
+                mLightFormBean = new LightFormBean();
+                rootViewMap.put(viewBean.getLightUINB().value(), mLightFormBean);
             }
-            if (itemsGroup != null && itemsGroup.getEndOrder() > i) {
-                itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
-            } else if (itemsGroup != null && itemsGroup.getEndOrder() == i) {
-                itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
+            if (true) {
+                addFixUI((ViewGroup) (getLightFormAdapter(mLightFormBean, LightFormAdapterManager.LightFixedAdapter.class).getContentHolder().getItemView()), layoutParams, grouplayoutParams, i, viewBean);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param mLightFormBean
+     * @param calzz
+     * @param <T>
+     * @return
+     */
+    private <T extends LightFormAdapterManager.LightFormBaseAdapterInterface> T getLightFormAdapter(LightFormBean mLightFormBean, Class<T> calzz) {
+        if (mLightFormBean.getAdapters().size() > 0 && calzz.isInstance(mLightFormBean.getAdapters().get(mLightFormBean.getAdapters().size() - 1))) {
+            return (T) mLightFormBean.getAdapters().get(mLightFormBean.getAdapters().size() - 1);
+        }
+        if (calzz == LightFormAdapterManager.LightFixedAdapter.class) {
+            LightFormAdapterManager.LightFixedAdapter fixedAdapter = new LightFormAdapterManager.LightFixedAdapter(mLightFormBean.getViewGroup(context));
+            mLightFormBean.adapters.add(fixedAdapter);
+            return (T) fixedAdapter;
+        }
+        return null;
+    }
+    LightItemGroupInterface itemsGroup = null;
+    /***
+     * 添加固定UI视图
+     * @param typerootView
+     * @param layoutParams
+     * @param grouplayoutParams
+     * @param i
+     * @param viewBean
+     */
+    private void addFixUI(ViewGroup typerootView, ViewGroup.LayoutParams layoutParams, ViewGroup.LayoutParams grouplayoutParams, int i, ViewBean viewBean) {
+        if (itemsGroup != null && itemsGroup.getEndOrder() > i) {
+            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
+        } else if (itemsGroup != null && itemsGroup.getEndOrder() == i) {
+            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
+            typerootView.addView(itemsGroup.getViewGroup(), grouplayoutParams);
+            itemsGroup = null;
+        } else if (itemsGroup == null && viewGroupCatch.containsKey(i)) {
+            itemsGroup = viewGroupCatch.get(i);
+            typerootView.addView(itemsGroup.getTitleView());
+            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
+            if (itemsGroup.getEndOrder() == i) {
                 typerootView.addView(itemsGroup.getViewGroup(), grouplayoutParams);
                 itemsGroup = null;
-            } else if (itemsGroup == null && viewGroupCatch.containsKey(i)) {
-                itemsGroup = viewGroupCatch.get(i);
-                typerootView.addView(itemsGroup.getTitleView());
-                itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
-                if (itemsGroup.getEndOrder() == i) {
-                    typerootView.addView(itemsGroup.getViewGroup(), grouplayoutParams);
-                    itemsGroup = null;
-                }
-            } else {
-                typerootView.addView(viewBean.lightItemIntface.getMyView(), layoutParams);
             }
+        } else {
+            typerootView.addView(viewBean.lightItemIntface.getMyView(), layoutParams);
         }
     }
 
@@ -250,4 +287,38 @@ public abstract class LightRichActivityManager {
 
         int getEndOrder();
     }
+
+    public static class LightFormBean {
+        private LightFormAdapterManager lightFormAdapterManager;
+        private RecyclerView recyclerView;
+        List<LightFormAdapterManager.LightFormBaseAdapterInterface> adapters = new ArrayList<>();
+
+        public LightFormAdapterManager getLightFormAdapterManager(Context context) {
+            if (lightFormAdapterManager == null)
+                lightFormAdapterManager = new LightFormAdapterManager(context);
+            return lightFormAdapterManager;
+        }
+
+        public View getPraseUI(Context context) {
+            getLightFormAdapterManager(context);
+            if (recyclerView == null)
+                recyclerView = new RecyclerView(context);
+            for (LightFormAdapterManager.LightFormBaseAdapterInterface item : adapters) {
+                lightFormAdapterManager.addAdapter(item);
+            }
+            lightFormAdapterManager.setRecyclerView(recyclerView);
+            return recyclerView;
+        }
+
+        public List<LightFormAdapterManager.LightFormBaseAdapterInterface> getAdapters() {
+            return adapters;
+        }
+
+        public ViewGroup getViewGroup(Context context) {
+            LinearLayout mLinearLayout = new LinearLayout(context);
+            mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+            return mLinearLayout;
+        }
+    }
+
 }
