@@ -21,12 +21,15 @@ public class Main2Activity extends AppCompatActivity {
         final LightFormAdapterManager adapterManager = new LightFormAdapterManager(this);
         View titleView = getLayoutInflater().inflate(R.layout.fix_uilayout, null);
         LightFormAdapterManager.LightFixedAdapter fixedAdapter = new LightFormAdapterManager.LightFixedAdapter(titleView);
-        adapterManager.addAdapter(fixedAdapter);
         final TestGradAdapter testGradAdapter = new TestGradAdapter(3);
+        /***********************************************/
+        adapterManager.addAdapter(fixedAdapter);
         adapterManager.addAdapter(testGradAdapter);
         adapterManager.addAdapter(new TestGradAdapter(4));
         adapterManager.addAdapter(new TestListAdapter());
         adapterManager.setRecyclerView(recyclerView);
+        /**********************************************************/
+
 
         testGradAdapter.setOnItemCilckListener(new LightFormAdapterManager.OnItemCilckListener() {
             @Override
