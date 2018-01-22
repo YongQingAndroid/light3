@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.posun.lightui.QlightUnit;
+
 /**
  * package Kotlin3:com.posun.lightui.richView.view.LightLinearLayout.class
  * 作者：zyq on 2018/1/17 14:03
@@ -26,7 +28,10 @@ public class LightRecyclerView extends RecyclerView {
     }
 
     private void initUI() {
-        setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        LayoutParams mLayoutParams=new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        int padding= QlightUnit.dip2px(getContext(),10);
+        setPadding(padding,padding,padding,padding);
+        setLayoutParams(mLayoutParams);
     }
 
 

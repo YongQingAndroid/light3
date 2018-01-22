@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.posun.lightui.QlightUnit;
 import com.posun.lightui.recyclerview.LightFormAdapterManager;
 import com.posun.lightui.richView.annotation.LightBtnItem;
 import com.posun.lightui.richView.annotation.LightCheckBox;
@@ -107,8 +108,10 @@ public abstract class LightRichActivityManager {
      */
     private void addItemView(Context context) {
         LightFormBean mLightFormBean = null;
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ViewGroup.LayoutParams grouplayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int margin= QlightUnit.dip2px(context,20);
+        layoutParams.setMargins(0,margin,0,0);
+        LinearLayout.LayoutParams grouplayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i = 0; i < views.size(); i++) {
             ViewBean viewBean = views.get(i);
             mLightFormBean = rootViewMap.get(viewBean.getLightUINB().value());
@@ -151,9 +154,9 @@ public abstract class LightRichActivityManager {
      */
     private void addFixUI(ViewGroup typerootView, ViewGroup.LayoutParams layoutParams, ViewGroup.LayoutParams grouplayoutParams, int i, ViewBean viewBean) {
         if (itemsGroup != null && itemsGroup.getEndOrder() > i) {
-            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
+            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView(),layoutParams);
         } else if (itemsGroup != null && itemsGroup.getEndOrder() == i) {
-            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView());
+            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView(),layoutParams);
             typerootView.addView(itemsGroup.getViewGroup(), grouplayoutParams);
             itemsGroup = null;
         } else if (itemsGroup == null && viewGroupCatch.containsKey(i)) {

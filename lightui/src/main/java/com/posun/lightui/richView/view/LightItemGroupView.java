@@ -34,7 +34,7 @@ public class LightItemGroupView implements LightRichActivityManager.LightItemGro
         title.setPadding(0, 10, 0, 10);
         linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setBackgroundColor(Color.WHITE);
+//        linearLayout.setBackgroundColor(Color.WHITE);
         linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
