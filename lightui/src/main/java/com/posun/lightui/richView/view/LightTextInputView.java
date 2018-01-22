@@ -25,40 +25,42 @@ import java.lang.reflect.Field;
 public class LightTextInputView extends android.support.v7.widget.AppCompatEditText implements LightRichActivityManager.LightItemIntface {
     private String labeText, value;
     private Field field;
-    private boolean hastriangle=false;
-    private int type=0;
-    public LightTextInputView(Context context, String labeText, String value,int type) {
+    private boolean hastriangle = false;
+    private int type = 0;
+
+    public LightTextInputView(Context context, String labeText, String value, int type) {
         super(context);
         this.labeText = labeText;
         this.value = value;
-        this.type=type;
+        this.type = type;
         initUi();
     }
+
     private void initUi() {
         setTextColor(Color.DKGRAY);
-        setTextSize(QlightUnit.sp2px(getContext(),12));
-        int labTextSize=QlightUnit.sp2px(getContext(),12);
-        int padding=QlightUnit.dip2px(getContext(),15);
-        setPadding(padding, padding+(labTextSize/2), padding, padding);
+        setTextSize(QlightUnit.sp2px(getContext(), 12));
+        int labTextSize = QlightUnit.sp2px(getContext(), 12);
+        int padding = QlightUnit.dip2px(getContext(), 15);
+        setPadding(padding, padding + (labTextSize / 2), padding, padding);
         setText(value);
-        int[] states=new int[]{android.R.attr.state_focused};
+        int[] states = new int[]{android.R.attr.state_focused};
         StateListDrawable drawable = new StateListDrawable();
-        LabTextDrawable labTextDrawable=new LabTextDrawable();
+        LabTextDrawable labTextDrawable = new LabTextDrawable();
         labTextDrawable.setColor(Color.parseColor("#FF4081"));
-        labTextDrawable.setRound(QlightUnit.dip2px(getContext(),5));
+        labTextDrawable.setRound(QlightUnit.dip2px(getContext(), 5));
         labTextDrawable.setText(labeText);
         labTextDrawable.setTextSize(labTextSize);
         labTextDrawable.setHastriangle(hastriangle);
-        drawable.addState(states,labTextDrawable);
+        drawable.addState(states, labTextDrawable);
 
-        LabTextDrawable nlabTextDrawable=new LabTextDrawable();
+        LabTextDrawable nlabTextDrawable = new LabTextDrawable();
         nlabTextDrawable.setColor(Color.parseColor("#779FEB"));
-        nlabTextDrawable.setRound(QlightUnit.dip2px(getContext(),5));
+        nlabTextDrawable.setRound(QlightUnit.dip2px(getContext(), 5));
         nlabTextDrawable.setText(labeText);
         nlabTextDrawable.setTextSize(labTextSize);
         nlabTextDrawable.setHastriangle(hastriangle);
-        drawable.addState(new int[]{},nlabTextDrawable);
-        if(hastriangle){
+        drawable.addState(new int[]{}, nlabTextDrawable);
+        if (hastriangle) {
             setFocusable(false);
             setFocusableInTouchMode(false);
         }
