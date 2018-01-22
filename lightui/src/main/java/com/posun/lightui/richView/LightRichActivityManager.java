@@ -3,6 +3,7 @@ package com.posun.lightui.richView;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -12,18 +13,21 @@ import com.posun.lightui.recyclerview.LightFormAdapterManager;
 import com.posun.lightui.richView.annotation.LightBtnItem;
 import com.posun.lightui.richView.annotation.LightCheckBox;
 import com.posun.lightui.richView.annotation.LightItemsGroups;
+import com.posun.lightui.richView.annotation.LightRadioBtn;
+import com.posun.lightui.richView.annotation.LightResources;
 import com.posun.lightui.richView.annotation.LightRichUI;
 import com.posun.lightui.richView.annotation.LightSelect;
 import com.posun.lightui.richView.annotation.LightSimpleClick;
 import com.posun.lightui.richView.annotation.LightTextLab;
 import com.posun.lightui.richView.instent.EventBean;
+import com.posun.lightui.richView.instent.ResourcesJsonArray;
 import com.posun.lightui.richView.instent.SimpleClickExeCute;
 import com.posun.lightui.richView.view.LightBtnItemView;
 import com.posun.lightui.richView.view.LightCheckGroup;
 import com.posun.lightui.richView.view.LightItemGroupView;
 import com.posun.lightui.richView.view.LightRecyclerView;
-import com.posun.lightui.richView.view.LightSelectGroup;
 import com.posun.lightui.richView.view.LightTextInputView;
+import com.posun.lightui.richView.view.LightTextSelectView;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -49,6 +53,10 @@ public abstract class LightRichActivityManager {
     }
 
     private Context context;
+
+    public Context getContext() {
+        return context;
+    }
 
     /**
      * @param clazzobj
@@ -109,8 +117,8 @@ public abstract class LightRichActivityManager {
     private void addItemView(Context context) {
         LightFormBean mLightFormBean = null;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        int margin= QlightUnit.dip2px(context,20);
-        layoutParams.setMargins(0,margin,0,0);
+        int margin = QlightUnit.dip2px(context, 7);
+        layoutParams.setMargins(0, margin, 0, 0);
         LinearLayout.LayoutParams grouplayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i = 0; i < views.size(); i++) {
             ViewBean viewBean = views.get(i);
@@ -126,7 +134,6 @@ public abstract class LightRichActivityManager {
     }
 
     /**
-     *
      * @param mLightFormBean
      * @param calzz
      * @param <T>
@@ -143,7 +150,9 @@ public abstract class LightRichActivityManager {
         }
         return null;
     }
+
     LightItemGroupInterface itemsGroup = null;
+
     /***
      * 添加固定UI视图
      * @param typerootView
@@ -154,9 +163,9 @@ public abstract class LightRichActivityManager {
      */
     private void addFixUI(ViewGroup typerootView, ViewGroup.LayoutParams layoutParams, ViewGroup.LayoutParams grouplayoutParams, int i, ViewBean viewBean) {
         if (itemsGroup != null && itemsGroup.getEndOrder() > i) {
-            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView(),layoutParams);
+            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView(), layoutParams);
         } else if (itemsGroup != null && itemsGroup.getEndOrder() == i) {
-            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView(),layoutParams);
+            itemsGroup.getViewGroup().addView(viewBean.lightItemIntface.getMyView(), layoutParams);
             typerootView.addView(itemsGroup.getViewGroup(), grouplayoutParams);
             itemsGroup = null;
         } else if (itemsGroup == null && viewGroupCatch.containsKey(i)) {
@@ -186,21 +195,37 @@ public abstract class LightRichActivityManager {
 
             if (obj instanceof LightTextLab) {
                 LightTextLab mLightTextLab = (LightTextLab) obj;
-                LightTextInputView mLightTextGroup = new LightTextInputView(context, mLightTextLab.lab(), String.valueOf(item.get(clazzobj)));
+                LightTextInputView mLightTextGroup = new LightTextInputView(context, mLightTextLab.lab(), String.valueOf(item.get(clazzobj)), mLightTextLab.type());
                 itemView = mLightTextGroup;
             } else if (obj instanceof LightBtnItem) {
                 LightBtnItem mLightBtnItem = (LightBtnItem) obj;
                 itemView = new LightBtnItemView(context, mLightBtnItem.lab());
             } else if (obj instanceof LightCheckBox) {
                 LightCheckBox mLightCheckBox = (LightCheckBox) obj;
-                itemView = new LightCheckGroup(context, mLightCheckBox.lab(), mLightCheckBox.value());
+                itemView = new LightCheckGroup(context, mLightCheckBox.lab(), String.valueOf(item.get(clazzobj)), null, null);
+            } else if (obj instanceof LightRadioBtn) {
+                LightRadioBtn mLightRadioBtn = (LightRadioBtn) obj;
+                LightResources resources = item.getAnnotation(LightResources.class);
+                ResourcesJsonArray resourcesJsonArray = null, resultJsonArray = null;
+                if (resources != null) {
+                    switch (resources.type()) {
+                        case LightRichType.RESOURCES_FINAL:
+                            resourcesJsonArray = new ResourcesJsonArray(resources.resources());
+                            if (!QlightUnit.isEmpty(resources.result()))
+                                resultJsonArray = new ResourcesJsonArray(resources.result());
+                            break;
+                        case LightRichType.RESOURCES_DYNAMIC:
+                            break;
+                    }
+                }
+                itemView = new LightCheckGroup(context, mLightRadioBtn.lab(),String.valueOf(item.get(clazzobj)), resourcesJsonArray, resultJsonArray);
             } else if (obj instanceof LightItemsGroups) {
                 LightItemsGroups lightitemsgroups = (LightItemsGroups) obj;
                 LightItemGroupView mLightItemGroupView = new LightItemGroupView(mLightRichUI.order(), lightitemsgroups.end(), lightitemsgroups.labename(), context);
                 viewGroupCatch.put(mLightRichUI.order(), mLightItemGroupView);
             } else if (obj instanceof LightSelect) {
                 LightSelect mLightSelect = (LightSelect) obj;
-                itemView = new LightSelectGroup(context, mLightSelect.lab(), String.valueOf(item.get(clazzobj)));
+                itemView = new LightTextSelectView(context, mLightSelect.lab(), String.valueOf(item.get(clazzobj)), true);
             }
             praseEvent(itemView, obj);
         }
@@ -321,6 +346,8 @@ public abstract class LightRichActivityManager {
         public ViewGroup getViewGroup(Context context) {
             LinearLayout mLinearLayout = new LinearLayout(context);
             mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+            mLinearLayout.setFocusable(true);
+            mLinearLayout.setFocusableInTouchMode(true);
             return mLinearLayout;
         }
     }

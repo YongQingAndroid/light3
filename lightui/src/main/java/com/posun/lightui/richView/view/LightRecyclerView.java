@@ -28,6 +28,7 @@ public class LightRecyclerView extends RecyclerView {
     }
 
     private void initUI() {
+
         LayoutParams mLayoutParams=new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         int padding= QlightUnit.dip2px(getContext(),10);
         setPadding(padding,padding,padding,padding);

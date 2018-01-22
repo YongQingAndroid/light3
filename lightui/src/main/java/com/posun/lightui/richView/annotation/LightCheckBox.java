@@ -11,4 +11,6 @@ public @interface LightCheckBox {
     String lab() default "lable";
 
     String value() default "";
+
+
 }

@@ -10,6 +10,7 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -24,9 +25,13 @@ public class TableSelectGroup extends RadioGroup {
     private DataChangeListener listener;
     private int radio = 5, color = Color.BLUE;
     private int index = 0;
+    private boolean enable = true;
 
     public TableSelectGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+    public TableSelectGroup(Context context) {
+        super(context);
     }
 
     public void setListener(DataChangeListener listener) {
@@ -38,15 +43,25 @@ public class TableSelectGroup extends RadioGroup {
         initUI();
     }
 
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return enable ? super.onInterceptTouchEvent(ev) : true;
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void initUI() {
+        setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER);
         setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                TableSelectGroup.this.index = getIndexById(checkedId);
                 if (listener == null)
                     return;
-                TableSelectGroup.this.index = getIndexById(checkedId);
                 listener.onDataSelect(index, data[index]);
             }
         });

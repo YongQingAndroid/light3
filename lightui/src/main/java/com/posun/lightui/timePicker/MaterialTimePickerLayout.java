@@ -101,7 +101,12 @@ public class MaterialTimePickerLayout implements PickerViewInterface {
         titleView.addView(title, lp);
         titleView.addView(sure);
         titleView.setBackgroundColor(color);
+        setListener();
     }
+
+    private void setListener() {
+    }
+
     /**
      *  初始化绑定滚轮监听器
      * */
