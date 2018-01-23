@@ -1,6 +1,7 @@
 package com.posun.lightui.listview;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -62,11 +63,12 @@ public class LightListViewGroupManager {
                     catchViewSectionPin = mViewSectionPin;
                     mListViewTopGroup.removeAllViews();
                     mViewSectionPin = getSectionPinView(pinViewAdapterPosition);
-                    if (mViewSectionPin.getLayoutParams() == null){
+                    if (mViewSectionPin.getLayoutParams() == null) {
                         mViewSectionPin.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     }
-
                     mListViewTopGroup.addView(mViewSectionPin);
+                } else {
+                    mListViewTopGroup.removeAllViews();
                 }
                 if (mViewSectionPin == null) {
                     return;
