@@ -1,11 +1,8 @@
 package qing.com.kotlin3.test;
 
-import android.text.InputType;
-
 import com.posun.lightui.richView.LightActionType;
 import com.posun.lightui.richView.LightRichType;
 import com.posun.lightui.richView.LightUINB;
-import com.posun.lightui.richView.annotation.LightCheckBox;
 import com.posun.lightui.richView.annotation.LightItemsGroups;
 import com.posun.lightui.richView.annotation.LightRadioBtn;
 import com.posun.lightui.richView.annotation.LightResources;
@@ -13,6 +10,7 @@ import com.posun.lightui.richView.annotation.LightRichUI;
 import com.posun.lightui.richView.annotation.LightSelect;
 import com.posun.lightui.richView.annotation.LightSimpleClick;
 import com.posun.lightui.richView.annotation.LightTextLab;
+
 /**
  * Created by qing on 2018/1/11.
  */
@@ -33,12 +31,12 @@ public class RichTest {
     String input = "56566565";
 
     @LightRichUI(value = LightUINB.ONE, order = 2)
-    @LightTextLab(lab = "密码",type = LightRichType.TEXT_PWD)
+    @LightTextLab(lab = "密码", type = LightRichType.TEXT_PWD)
     String passward = "56566565";
 
     @LightRichUI(value = LightUINB.ONE, order = 3)
     @LightSelect(lab = "select Event")
-    @LightSimpleClick(type = LightActionType.NET_GET,value = "url")
+    @LightSimpleClick(type = LightActionType.NET_GET, value = "url")
     String select = "5656566";
 
     @LightRichUI(value = LightUINB.ONE, order = 4)
@@ -48,8 +46,8 @@ public class RichTest {
 
     @LightRichUI(value = LightUINB.ONE, order = 5)
     @LightRadioBtn(lab = "单选按钮")
-    @LightResources(resources ="[按钮1,按钮2,按钮3]")
-    String checkbox = "";
+    @LightResources(resources = "[按钮1,按钮2,按钮3]", result = "[x,y,z]")
+    String checkbox = "z";
 
     public String getPassward() {
         return passward;
