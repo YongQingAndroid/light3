@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -61,7 +62,10 @@ public class LightListViewGroupManager {
                     catchViewSectionPin = mViewSectionPin;
                     mListViewTopGroup.removeAllViews();
                     mViewSectionPin = getSectionPinView(pinViewAdapterPosition);
-                    mViewSectionPin.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    if (mViewSectionPin.getLayoutParams() == null){
+                        mViewSectionPin.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    }
+
                     mListViewTopGroup.addView(mViewSectionPin);
                 }
                 if (mViewSectionPin == null) {
@@ -88,7 +92,10 @@ public class LightListViewGroupManager {
         });
     }
 
-    public ListAdapter getAdapter() {
+    private ListAdapter getAdapter() {
+        if ((listView.getAdapter() instanceof HeaderViewListAdapter)) {
+            return ((HeaderViewListAdapter) listView.getAdapter()).getWrappedAdapter();
+        }
         return listView.getAdapter();
     }
 

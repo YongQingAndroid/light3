@@ -19,6 +19,7 @@ public class ListViewTopGroup extends LinearLayout {
     public ListViewTopGroup(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
+
     public ListViewTopGroup(Context context) {
         super(context);
     }
@@ -31,9 +32,11 @@ public class ListViewTopGroup extends LinearLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         View mViewSectionPin = getChildAt(0);
-        canvas.translate(0, mSectionPinOffset);
-        canvas.clipRect(0, 0, getWidth(), mViewSectionPin.getMeasuredHeight()); // needed
-        mViewSectionPin.draw(canvas);
+        if (mViewSectionPin != null) {
+            canvas.translate(0, mSectionPinOffset);
+            canvas.clipRect(0, 0, getWidth(), mViewSectionPin.getMeasuredHeight()); // needed
+            mViewSectionPin.draw(canvas);
+        }
         super.dispatchDraw(canvas);
     }
 }
