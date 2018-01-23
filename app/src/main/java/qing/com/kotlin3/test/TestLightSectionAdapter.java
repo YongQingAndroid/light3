@@ -30,14 +30,14 @@ public class TestLightSectionAdapter extends LightListViewGroupAdapter {
     public View getGroupView(int position, View view, ViewGroup viewGroup) {
         Holder holder;
         if (view == null) {
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_adapter_title, null);
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_adapter_title, viewGroup,false);
             holder = new Holder(view);
             view.setTag(holder);
         } else {
             holder = (Holder) view.getTag();
 
         }
-        holder.textView.setText("group=" + position / 5);
+//        holder.textView.setText("group=" + position / 5);
 
         return view;
     }
@@ -46,13 +46,13 @@ public class TestLightSectionAdapter extends LightListViewGroupAdapter {
         private TextView textView;
 
         Holder(View view) {
-            textView = view.findViewById(R.id.title_t);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(view.getContext(), textView.getText().toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
+//            textView = view.findViewById(R.id.title_t);
+//            view.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Toast.makeText(view.getContext(), textView.getText().toString(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
     }
 
