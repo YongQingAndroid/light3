@@ -12,6 +12,7 @@ import com.posun.lightui.richView.annotation.LightSimpleClick;
 import com.posun.lightui.richView.annotation.LightTextLab;
 
 /**
+ *
  * Created by qing on 2018/1/11.
  */
 

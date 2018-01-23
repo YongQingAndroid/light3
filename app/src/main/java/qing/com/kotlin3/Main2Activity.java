@@ -27,6 +27,7 @@ public class Main2Activity extends AppCompatActivity {
         adapterManager.addAdapter(testGradAdapter);
         adapterManager.addAdapter(new TestGradAdapter(4));
         adapterManager.addAdapter(new TestListAdapter());
+
         adapterManager.setRecyclerView(recyclerView);
         /**********************************************************/
 

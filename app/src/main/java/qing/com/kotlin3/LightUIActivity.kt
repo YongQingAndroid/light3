@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
+import android.widget.TextView
 import com.posun.lightui.MaterialDBCityPIckerView
 import com.posun.lightui.citypicker.CityDataSource
 import com.posun.lightui.citypicker.LightDialog
@@ -58,6 +59,12 @@ class LightUIActivity : AppCompatActivity() {
 //        Thread {
 //            var view = BaseCalenderView(this)
 //        }.start()
+        var textView= TextView(this)
+        textView.text="565656565656565656565656"
+        textView.setOnClickListener{
+            toast("666666666")
+        }
+        lighttestview.setView(textView)
     }
 
     fun something(string: String) {

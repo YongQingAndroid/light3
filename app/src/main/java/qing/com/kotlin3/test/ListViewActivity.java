@@ -19,7 +19,7 @@ public class ListViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
         ListView listview = (ListView) findViewById(R.id.listview);
-        listview.addHeaderView(new TextView(this));
+//        listview.addHeaderView(new TextView(this));
         listview.setAdapter(new TestLightSectionAdapter());
         LightListViewGroupManager manager = new LightListViewGroupManager();
         manager.init(this, listview);
