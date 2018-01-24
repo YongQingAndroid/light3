@@ -64,6 +64,7 @@ public class LightListViewGroupManager {
                      */
                     mListViewTopGroup.removeAllViews();
                     View itemView = getSectionPinView(pinViewAdapterPosition);
+                    itemView.invalidate();
                     mViewSectionPin=itemView;
                     if (mViewSectionPin.getLayoutParams() == null) {
                         mViewSectionPin.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
