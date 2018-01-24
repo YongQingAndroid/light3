@@ -19,9 +19,10 @@ import android.widget.ListView;
 public class LightListViewGroupManager {
     ListViewTopGroup mListViewTopGroup = null;
     private ListView listView;
-    private View mViewSectionPin, catchViewSectionPin;
+    private View mViewSectionPin;
     private float mSectionPinOffset = 0f;
     private FrameLayout frameLayout;
+    private int beforindex = -1;
 
     public void init(Activity activity, ListView listView) {
         this.listView = listView;
@@ -56,23 +57,27 @@ public class LightListViewGroupManager {
                 }
                 int adapterFirstVisibleItem = firstVisibleItem - headerViewCount;
                 int pinViewAdapterPosition = getPinViewAdapterPosition(adapterFirstVisibleItem);
-                if (pinViewAdapterPosition != -1) {
+                /**提高滑動速度減少繪製*/
+                if (pinViewAdapterPosition != -1 && beforindex != pinViewAdapterPosition) {
                     /**
                      * pin view 被换掉了
                      */
-                    catchViewSectionPin = mViewSectionPin;
                     mListViewTopGroup.removeAllViews();
-                    mViewSectionPin = getSectionPinView(pinViewAdapterPosition);
+                    View itemView = getSectionPinView(pinViewAdapterPosition);
+                    mViewSectionPin=itemView;
                     if (mViewSectionPin.getLayoutParams() == null) {
                         mViewSectionPin.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     }
                     mListViewTopGroup.addView(mViewSectionPin);
-                } else {
+                    beforindex = pinViewAdapterPosition;
+                } else if (pinViewAdapterPosition < 0 && (beforindex == 0 || beforindex < 0)) { ///当有HeaderViews时及时移除悬浮View
                     mListViewTopGroup.removeAllViews();
+                    beforindex = pinViewAdapterPosition;
                 }
                 if (mViewSectionPin == null) {
                     return;
                 }
+//                Log.i("zyq", pinViewAdapterPosition + "beforindex =" + beforindex);
                 for (int index = 0; index < visibleItemCount; index++) {
                     int adapterPosition = index + adapterFirstVisibleItem;
                     /**
@@ -93,12 +98,14 @@ public class LightListViewGroupManager {
             }
         });
     }
-
+    private ListAdapter mListAdapter;
     private ListAdapter getAdapter() {
+        if(mListAdapter!=null)
+            return mListAdapter;
         if ((listView.getAdapter() instanceof HeaderViewListAdapter)) {
-            return ((HeaderViewListAdapter) listView.getAdapter()).getWrappedAdapter();
+            return mListAdapter=((HeaderViewListAdapter) listView.getAdapter()).getWrappedAdapter();
         }
-        return listView.getAdapter();
+        return mListAdapter=listView.getAdapter();
     }
 
     public int getHeaderViewsCount() {
@@ -114,10 +121,7 @@ public class LightListViewGroupManager {
         if (getAdapter() == null) {
             return null;
         }
-        /**
-         * getView的第二个参数一定要传空，因为我们不能用复用的View
-         */
-        return ((LightListViewGroupAdapter) getAdapter()).getGroupView(adapterPosition, catchViewSectionPin, mListViewTopGroup);
+        return ((LightListViewGroupAdapter) getAdapter()).getGroupView(adapterPosition, mViewSectionPin, mListViewTopGroup);
     }
 
     /**
