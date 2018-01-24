@@ -38,7 +38,6 @@ public class TestLightSectionAdapter extends LightListViewGroupAdapter {
 
         }
         holder.name.setText("group=" + position / 5);
-
         return view;
     }
 

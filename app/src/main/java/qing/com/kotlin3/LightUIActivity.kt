@@ -64,7 +64,7 @@ class LightUIActivity : AppCompatActivity() {
         textView.setOnClickListener{
             toast("666666666")
         }
-        lighttestview.setView(textView)
+//        lighttestview.setView(textView)
     }
 
     fun something(string: String) {
