@@ -1,7 +1,6 @@
 package com.posun.lightui.listview;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -62,14 +61,15 @@ public class LightListViewGroupManager {
                     /**
                      * pin view 被换掉了
                      */
-                    mListViewTopGroup.removeAllViews();
-                    View itemView = getSectionPinView(pinViewAdapterPosition);
-                    itemView.invalidate();
-                    mViewSectionPin=itemView;
-                    if (mViewSectionPin.getLayoutParams() == null) {
-                        mViewSectionPin.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//                    mListViewTopGroup.removeAllViews();//犯过的错误已经渲染完成的View其实失去ViewRoot即便从新刷新赋值也不会更新UI（非常重要要记得这个错误）
+                    View view = getSectionPinView(pinViewAdapterPosition);
+                    if (mViewSectionPin == null || mListViewTopGroup.getChildCount() == 0) {
+                        mViewSectionPin = view;
+                        if (mViewSectionPin.getLayoutParams() == null) {
+                            mViewSectionPin.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        }
+                        mListViewTopGroup.addView(mViewSectionPin);
                     }
-                    mListViewTopGroup.addView(mViewSectionPin);
                     beforindex = pinViewAdapterPosition;
                 } else if (pinViewAdapterPosition < 0 && (beforindex == 0 || beforindex < 0)) { ///当有HeaderViews时及时移除悬浮View
                     mListViewTopGroup.removeAllViews();
@@ -99,14 +99,16 @@ public class LightListViewGroupManager {
             }
         });
     }
+
     private ListAdapter mListAdapter;
+
     private ListAdapter getAdapter() {
-        if(mListAdapter!=null)
+        if (mListAdapter != null)
             return mListAdapter;
         if ((listView.getAdapter() instanceof HeaderViewListAdapter)) {
-            return mListAdapter=((HeaderViewListAdapter) listView.getAdapter()).getWrappedAdapter();
+            return mListAdapter = ((HeaderViewListAdapter) listView.getAdapter()).getWrappedAdapter();
         }
-        return mListAdapter=listView.getAdapter();
+        return mListAdapter = listView.getAdapter();
     }
 
     public int getHeaderViewsCount() {
