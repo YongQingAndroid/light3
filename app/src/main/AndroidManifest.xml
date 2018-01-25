@@ -18,16 +18,18 @@
             android:name=".ListActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".LightUIActivity"></activity>
-        <activity android:name=".Main2Activity"></activity>
-        <activity android:name=".test.LightRichActivity">
-
-        </activity>
-        <activity android:name=".test.ListViewActivity">
+        <activity android:name=".Main2Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".test.LightRichActivity">
+
+        </activity>
+        <activity android:name=".test.ListViewActivity">
+
         </activity>
     </application>
 
