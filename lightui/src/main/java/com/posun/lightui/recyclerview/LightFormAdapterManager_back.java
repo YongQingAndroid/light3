@@ -28,16 +28,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 邮箱：zyq@posun.com
  */
 
-public class LightFormAdapterManager {
+public class LightFormAdapterManager_back extends RecyclerView.Adapter<LightFormAdapterManager_back.Holder> {
     private List<LightFormBaseAdapterInterface> data = new ArrayList<>();
     private Map<LightFormBaseAdapterInterface, Integer> t_size = new HashMap<>();
-    private List<LightFormAdapterManager> listAdapterManager;
+    private List<LightFormAdapterManager_back> listAdapterManager;
     private AtomicInteger atomicInteger = new AtomicInteger(50);
     private ViewGroup viewGroup;
     private int spanCount = 1;
     private Context context;
 
-    public LightFormAdapterManager(Context context) {
+    public LightFormAdapterManager_back(Context context) {
         this.context = context;
     }
 
@@ -48,7 +48,7 @@ public class LightFormAdapterManager {
      * @param viewType
      * @return
      */
-
+    @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         LightFormBaseAdapterInterface item = null;
         Log.e("LightFormAdapterManager", "onCreateViewHolder");
@@ -76,11 +76,11 @@ public class LightFormAdapterManager {
      * @param adapter 添加的子适配器LightGridAdapter，LightFixedAdapter ，LightListAdapter
      * @return当前对象
      */
-    public LightFormAdapterManager addAdapter(LightFormBaseAdapterInterface adapter) {
+    public LightFormAdapterManager_back addAdapter(LightFormBaseAdapterInterface adapter) {
         adapter.setInstentType(atomicInteger.addAndGet(1));
         if (adapter instanceof LightGridAdapter) {
             LightGridAdapter mLightGridAdapter = (LightGridAdapter) adapter;
-            LightFormAdapterManager.this.spanCount = LightFormAdapterManager.this.spanCount * mLightGridAdapter.spanCount;
+            LightFormAdapterManager_back.this.spanCount = LightFormAdapterManager_back.this.spanCount * mLightGridAdapter.spanCount;
             if (data.size() > 0 && data.get(data.size() - 1) instanceof LightGridAdapter) {
                 data.add(new LightFixedAdapter(new View(context)));
             }
@@ -95,18 +95,11 @@ public class LightFormAdapterManager {
      * @param adapterManager
      * @return
      */
-    public LightFormAdapterManager addAdapterManager(LightFormAdapterManager adapterManager) {
+    public LightFormAdapterManager_back addAdapterManager(LightFormAdapterManager_back adapterManager) {
         if (listAdapterManager == null)
             listAdapterManager = new ArrayList<>();
         listAdapterManager.add(adapterManager);
         return this;
-    }
-
-    private RecyclerView.Adapter getBaseAdapter() {
-        if (baseAdapter == null) {
-            /***/
-        }
-        return baseAdapter;
     }
 
     /**
@@ -117,25 +110,25 @@ public class LightFormAdapterManager {
     public void setRecyclerView(RecyclerView recyclerView) {
         if (data.size() == 0)
             throw new RuntimeException("必选先添加子适配器");
-        LightGridLayoutManager mLightGridLayoutManager = new LightGridLayoutManager(recyclerView.getContext(), LightFormAdapterManager.this.spanCount);
+        LightGridLayoutManager mLightGridLayoutManager = new LightGridLayoutManager(recyclerView.getContext(), LightFormAdapterManager_back.this.spanCount);
         recyclerView.setLayoutManager(mLightGridLayoutManager);
-        recyclerView.setAdapter(getBaseAdapter());
+        recyclerView.setAdapter(this);
         mLightGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-
+            @Override
             public int getSpanSize(int position) {
                 LightFormBaseAdapterInterface mLightFormBaseAdapterInterface = getAdapterByPosition(position);
                 if (mLightFormBaseAdapterInterface instanceof LightGridAdapter) {
-                    return LightFormAdapterManager.this.spanCount / ((LightGridAdapter) mLightFormBaseAdapterInterface).spanCount;
+                    return LightFormAdapterManager_back.this.spanCount / ((LightGridAdapter) mLightFormBaseAdapterInterface).spanCount;
                 } else if (mLightFormBaseAdapterInterface instanceof LightListAdapter) {
-                    return LightFormAdapterManager.this.spanCount;
+                    return LightFormAdapterManager_back.this.spanCount;
                 } else {
-                    return LightFormAdapterManager.this.spanCount;
+                    return LightFormAdapterManager_back.this.spanCount;
                 }
             }
         });
         recyclerView.addOnItemTouchListener(
                 new LightOnItemTouchListener(recyclerView, new LightOnItemTouchListener.OnItemTouchListener<Holder>() {
-
+                    @Override
                     public void onItemClick(Holder vh) {
                         if (vh.myLightFormBaseAdapter instanceof LightFixedAdapter) {
                             return;
@@ -146,7 +139,7 @@ public class LightFormAdapterManager {
                         }
                     }
 
-
+                    @Override
                     public void onLongItemClick(Holder vh) {
 
                     }
@@ -176,7 +169,7 @@ public class LightFormAdapterManager {
      * @param position
      * @return适配器的视图类型
      */
-
+    @Override
     public int getItemViewType(int position) {
         LightFormBaseAdapterInterface item = getAdapterByPosition(position);
         if (item.getInstentType() == -1) {
@@ -205,10 +198,6 @@ public class LightFormAdapterManager {
         return data.get(data.size() - 1);
     }
 
-    private LightFormAdapterManager getManagerByPosition(int position) {
-        return this;
-    }
-
     /***
      * @param position
      * @return获取对应的真实位置
@@ -230,7 +219,7 @@ public class LightFormAdapterManager {
      * @param holder
      * @param position
      */
-
+    @Override
     public void onBindViewHolder(Holder holder, int position) {
         int arg = getChildAdapterPosition(position);
         holder.myLightFormBaseAdapter.bindView(viewGroup, holder.childHolder, arg);
@@ -239,7 +228,7 @@ public class LightFormAdapterManager {
     /**
      * @return根据子适配器算出视图总数
      */
-
+    @Override
     public int getItemCount() {
         int size = 0;
         for (LightFormBaseAdapterInterface item : data) {
@@ -248,7 +237,7 @@ public class LightFormAdapterManager {
             t_size.put(item, itemsize);
         }
         if (listAdapterManager != null & listAdapterManager.size() > 0) {
-            for (LightFormAdapterManager itemManager : listAdapterManager) {//此处涉及循环递归
+            for (LightFormAdapterManager_back itemManager : listAdapterManager) {//此处涉及循环递归
                 size += itemManager.getItemCount();
             }
         }
@@ -277,7 +266,7 @@ public class LightFormAdapterManager {
         protected View itemView;
         private int position = 0;
         private WeakReference<Holder> mOwnerHolder;
-        private WeakReference<LightFormAdapterManager> mOwnerFormAdapterManager;
+        private WeakReference<LightFormAdapterManager_back> mOwnerFormAdapterManager;
 
         public View getItemView() {
             return itemView;
@@ -292,8 +281,8 @@ public class LightFormAdapterManager {
             return this;
         }
 
-        private ChildHolder addOwerFormAdapterManager(LightFormAdapterManager lightFormAdapterManager) {
-            mOwnerFormAdapterManager = new WeakReference<LightFormAdapterManager>(lightFormAdapterManager);
+        private ChildHolder addOwerFormAdapterManager(LightFormAdapterManager_back lightFormAdapterManager) {
+            mOwnerFormAdapterManager = new WeakReference<LightFormAdapterManager_back>(lightFormAdapterManager);
             return this;
         }
 
@@ -368,17 +357,17 @@ public class LightFormAdapterManager {
             this.itemCilckListener = itemCilckListener;
         }
 
-
+        @Override
         public OnItemCilckListener getItemCilckListener() {
             return itemCilckListener;
         }
 
-
+        @Override
         public int getInstentType() {
             return instentType;
         }
 
-
+        @Override
         public void setInstentType(int instentType) {
             this.instentType = instentType;
         }
@@ -393,7 +382,7 @@ public class LightFormAdapterManager {
         protected int spanCount = 1;
         protected OnItemCilckListener itemCilckListener;
 
-
+        @Override
         public OnItemCilckListener getItemCilckListener() {
             return itemCilckListener;
         }
@@ -406,12 +395,12 @@ public class LightFormAdapterManager {
             this.spanCount = spanCount;
         }
 
-
+        @Override
         public int getInstentType() {
             return instentType;
         }
 
-
+        @Override
         public void setInstentType(int instentType) {
             this.instentType = instentType;
         }
@@ -427,7 +416,7 @@ public class LightFormAdapterManager {
             return contentHolder;
         }
 
-
+        @Override
         public OnItemCilckListener getItemCilckListener() {
             return null;
         }
@@ -438,44 +427,43 @@ public class LightFormAdapterManager {
 
         protected int instentType = -1;
 
-
+        @Override
         public int getItemCount() {
             return 1;
         }
 
-
+        @Override
         public int getViewType(int position) {
             return 0;
         }
 
-
+        @Override
         public ChildHolder getView(ViewGroup viewGroup, int viewType) {
             return contentHolder;
         }
 
 
+        @Override
         public void bindView(ViewGroup viewGroup, ChildHolder holder, int position) {
 
         }
 
-
+        @Override
         public int getInstentType() {
             return instentType;
         }
 
-
+        @Override
         public void setInstentType(int instentType) {
             this.instentType = instentType;
         }
     }
 
-    private RecyclerView.Adapter baseAdapter;
-
     /**
      * 刷新全部视图
      */
     public final void notifyAllChildItem() {
-        baseAdapter.notifyDataSetChanged();
+        this.notifyDataSetChanged();
     }
 
     /**
@@ -487,7 +475,7 @@ public class LightFormAdapterManager {
      */
     public final void notifyChildItemRangeChanged(int position, int itemCount, LightFormBaseAdapterInterface adapterInterface) {
         t_size.put(adapterInterface, adapterInterface.getItemCount());
-        baseAdapter.notifyItemRangeChanged(getTruePositionByChildIndex(position, adapterInterface), itemCount);
+        this.notifyItemRangeChanged(getTruePositionByChildIndex(position, adapterInterface), itemCount);
     }
 
     /**
@@ -499,7 +487,7 @@ public class LightFormAdapterManager {
      */
     public final void notifyChildItemRangeInserted(int positionStart, int itemCount, LightFormBaseAdapterInterface adapterInterface) {
         t_size.put(adapterInterface, adapterInterface.getItemCount());
-        baseAdapter.notifyItemRangeInserted(getTruePositionByChildIndex(positionStart, adapterInterface), itemCount);
+        this.notifyItemRangeInserted(getTruePositionByChildIndex(positionStart, adapterInterface), itemCount);
     }
 
     /**
@@ -511,7 +499,7 @@ public class LightFormAdapterManager {
      */
     public final void notifyChildItemRangeRemoved(int positionStart, int itemCount, LightFormBaseAdapterInterface adapterInterface) {
         t_size.put(adapterInterface, adapterInterface.getItemCount());
-        baseAdapter.notifyItemRangeRemoved(getTruePositionByChildIndex(positionStart, adapterInterface), itemCount);
+        this.notifyItemRangeRemoved(getTruePositionByChildIndex(positionStart, adapterInterface), itemCount);
     }
 
     public interface OnItemCilckListener {

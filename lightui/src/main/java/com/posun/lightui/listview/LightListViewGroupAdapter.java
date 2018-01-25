@@ -41,7 +41,12 @@ public abstract class LightListViewGroupAdapter extends BaseAdapter {
         if (issection) {
             View catchView = null;
             catchView = getCatchView(holder);
-            catchView = getGroupView(position, catchView, holder.rootView);
+            if(catchView==null){
+                catchView = getGroupView(position, catchView, holder.rootView);
+                catchView.setOnClickListener(onClickListener); //屏蔽点击group item时 触发onitemClick
+            }else{
+                catchView = getGroupView(position, catchView, holder.rootView);
+            }
             holder.addTitleView(catchView);
         } else if (holder.titleView != null) {
             catchViews.add(holder.titleView);
@@ -53,7 +58,12 @@ public abstract class LightListViewGroupAdapter extends BaseAdapter {
         holder.addContentView(contentView);
         return view;
     }
-
+    private View.OnClickListener onClickListener=new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //屏蔽点击group item时 触发onitemClick
+        }
+    };
     private View getCatchView(Holder holder) {
         View catchView = null;
         if (holder.titleView != null) {
