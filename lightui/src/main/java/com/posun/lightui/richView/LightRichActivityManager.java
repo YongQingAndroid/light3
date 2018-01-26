@@ -3,7 +3,6 @@ package com.posun.lightui.richView;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -128,7 +127,7 @@ public abstract class LightRichActivityManager {
                 rootViewMap.put(viewBean.getLightUINB().value(), mLightFormBean);
             }
             if (true) {
-                addFixUI((ViewGroup) (getLightFormAdapter(mLightFormBean, LightFormAdapterManager.LightFixedAdapter.class).getContentHolder().getItemView()), layoutParams, grouplayoutParams, i, viewBean);
+                addFixUI((ViewGroup) (getLightFormAdapter(mLightFormBean, LightFormAdapterManager.LightRecyclerFixedAdapter.class).getContentHolder().getItemView()), layoutParams, grouplayoutParams, i, viewBean);
             }
         }
     }
@@ -143,8 +142,8 @@ public abstract class LightRichActivityManager {
         if (mLightFormBean.getAdapters().size() > 0 && calzz.isInstance(mLightFormBean.getAdapters().get(mLightFormBean.getAdapters().size() - 1))) {
             return (T) mLightFormBean.getAdapters().get(mLightFormBean.getAdapters().size() - 1);
         }
-        if (calzz == LightFormAdapterManager.LightFixedAdapter.class) {
-            LightFormAdapterManager.LightFixedAdapter fixedAdapter = new LightFormAdapterManager.LightFixedAdapter(mLightFormBean.getViewGroup(context));
+        if (calzz == LightFormAdapterManager.LightRecyclerFixedAdapter.class) {
+            LightFormAdapterManager.LightRecyclerFixedAdapter fixedAdapter = new LightFormAdapterManager.LightRecyclerFixedAdapter(mLightFormBean.getViewGroup(context));
             mLightFormBean.adapters.add(fixedAdapter);
             return (T) fixedAdapter;
         }

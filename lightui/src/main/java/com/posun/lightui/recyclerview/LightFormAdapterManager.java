@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapterManager.Holder> {
     private List<LightFormBaseAdapterInterface> data = new ArrayList<>();
     private Map<LightFormBaseAdapterInterface, Integer> t_size = new HashMap<>();
-    private List<LightFormAdapterManager> listAdapterManager;
+    //    private List<LightFormAdapterManager> listAdapterManager;
     private AtomicInteger atomicInteger = new AtomicInteger(50);
     private ViewGroup viewGroup;
     private int spanCount = 1;
@@ -66,24 +66,25 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
         }
         if (viewGroup == null)
             viewGroup = parent;
-        ChildHolder childHolder = item.getView(parent, item.getViewType(resultType)).addOwerFormAdapterManager(this);
+        ChildHolder childHolder = item.onCreateViewHolder(parent, item.getViewType(resultType)).addOwerFormAdapterManager(this);
         return new Holder(childHolder, item);
     }
 
     /**
      * 添加子适配器
      *
-     * @param adapter 添加的子适配器LightGridAdapter，LightFixedAdapter ，LightListAdapter
+     * @param adapter 添加的子适配器LightGridAdapter，LightRecyclerFixedAdapter ，LightRecyclerListAdapter
      * @return当前对象
      */
     public LightFormAdapterManager addAdapter(LightFormBaseAdapterInterface adapter) {
         adapter.setInstentType(atomicInteger.addAndGet(1));
-        if (adapter instanceof LightGridAdapter) {
-            LightGridAdapter mLightGridAdapter = (LightGridAdapter) adapter;
-            LightFormAdapterManager.this.spanCount = LightFormAdapterManager.this.spanCount * mLightGridAdapter.spanCount;
-            if (data.size() > 0 && data.get(data.size() - 1) instanceof LightGridAdapter) {
-                data.add(new LightFixedAdapter(new View(context)));
+        if (adapter instanceof LightRecyclerGridAdapter) {
+            LightRecyclerGridAdapter mLightGridAdapter = (LightRecyclerGridAdapter) adapter;
+            if (data.size() > 0 && data.get(data.size() - 1) instanceof LightRecyclerGridAdapter) {
+                data.add(new LightRecyclerFixedAdapter(new View(context)));
             }
+            if (LightFormAdapterManager.this.spanCount % mLightGridAdapter.spanCount != 0)
+                LightFormAdapterManager.this.spanCount = LightFormAdapterManager.this.spanCount * mLightGridAdapter.spanCount;
         }
         data.add(adapter);
         return this;
@@ -96,9 +97,9 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
      * @return
      */
     public LightFormAdapterManager addAdapterManager(LightFormAdapterManager adapterManager) {
-        if (listAdapterManager == null)
-            listAdapterManager = new ArrayList<>();
-        listAdapterManager.add(adapterManager);
+//        if (listAdapterManager == null)
+//            listAdapterManager = new ArrayList<>();
+//        listAdapterManager.add(adapterManager);
         return this;
     }
 
@@ -117,9 +118,9 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
             @Override
             public int getSpanSize(int position) {
                 LightFormBaseAdapterInterface mLightFormBaseAdapterInterface = getAdapterByPosition(position);
-                if (mLightFormBaseAdapterInterface instanceof LightGridAdapter) {
-                    return LightFormAdapterManager.this.spanCount / ((LightGridAdapter) mLightFormBaseAdapterInterface).spanCount;
-                } else if (mLightFormBaseAdapterInterface instanceof LightListAdapter) {
+                if (mLightFormBaseAdapterInterface instanceof LightRecyclerGridAdapter) {
+                    return LightFormAdapterManager.this.spanCount / ((LightRecyclerGridAdapter) mLightFormBaseAdapterInterface).spanCount;
+                } else if (mLightFormBaseAdapterInterface instanceof LightRecyclerListAdapter) {
                     return LightFormAdapterManager.this.spanCount;
                 } else {
                     return LightFormAdapterManager.this.spanCount;
@@ -130,7 +131,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
                 new LightOnItemTouchListener(recyclerView, new LightOnItemTouchListener.OnItemTouchListener<Holder>() {
                     @Override
                     public void onItemClick(Holder vh) {
-                        if (vh.myLightFormBaseAdapter instanceof LightFixedAdapter) {
+                        if (vh.myLightFormBaseAdapter instanceof LightRecyclerFixedAdapter) {
                             return;
                         }
                         int arg = getChildAdapterPosition(vh.getAdapterPosition());
@@ -222,10 +223,12 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         int arg = getChildAdapterPosition(position);
-        holder.myLightFormBaseAdapter.bindView(viewGroup, holder.childHolder, arg);
+        holder.myLightFormBaseAdapter.onBindViewHolder(viewGroup, holder.childHolder, arg);
     }
 
     /**
+     * 此处不能使用map中的缓存需要重新刷新
+     *
      * @return根据子适配器算出视图总数
      */
     @Override
@@ -236,11 +239,11 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
             size += itemsize;
             t_size.put(item, itemsize);
         }
-        if (listAdapterManager != null & listAdapterManager.size() > 0) {
-            for (LightFormAdapterManager itemManager : listAdapterManager) {//此处涉及循环递归
-                size += itemManager.getItemCount();
-            }
-        }
+//        if (listAdapterManager != null && listAdapterManager.size() > 0) {
+//            for (LightFormAdapterManager itemManager : listAdapterManager) {//此处涉及循环递归
+//                size += itemManager.getItemCount();
+//            }
+//        }
         return size;
     }
 
@@ -322,7 +325,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
          * @param viewGroup
          * @return视图的ChildHolder对象
          */
-        H getView(ViewGroup viewGroup, int viewType);
+        H onCreateViewHolder(ViewGroup viewGroup, int viewType);
 
         /**
          * 绑定视图数据
@@ -331,7 +334,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
          * @param holder
          * @param position
          */
-        void bindView(ViewGroup viewGroup, H holder, int position);
+        void onBindViewHolder(ViewGroup viewGroup, H holder, int position);
 
         /**
          * @return获取子适配器的实例化类型
@@ -349,7 +352,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
     /***
      * 列表子视图适配器
      */
-    public static abstract class LightListAdapter<H extends ChildHolder> implements LightFormBaseAdapterInterface<H> {
+    public static abstract class LightRecyclerListAdapter<H extends ChildHolder> implements LightFormBaseAdapterInterface<H> {
         protected int instentType = -1;
         protected OnItemCilckListener itemCilckListener;
 
@@ -376,7 +379,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
     /***
      * 表格子视图适配器
      */
-    public static abstract class LightGridAdapter<H extends ChildHolder> implements LightFormBaseAdapterInterface<H> {
+    public static abstract class LightRecyclerGridAdapter<H extends ChildHolder> implements LightFormBaseAdapterInterface<H> {
 
         protected int instentType = -1;
         protected int spanCount = 1;
@@ -391,7 +394,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
             this.itemCilckListener = itemCilckListener;
         }
 
-        public LightGridAdapter(int spanCount) {
+        public LightRecyclerGridAdapter(int spanCount) {
             this.spanCount = spanCount;
         }
 
@@ -409,7 +412,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
     /***
      * 固定表单布局适配器
      */
-    public static class LightFixedAdapter implements LightFormBaseAdapterInterface {
+    public static class LightRecyclerFixedAdapter implements LightFormBaseAdapterInterface {
         protected ChildHolder contentHolder;
 
         public ChildHolder getContentHolder() {
@@ -421,7 +424,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
             return null;
         }
 
-        public LightFixedAdapter(View view) {
+        public LightRecyclerFixedAdapter(View view) {
             this.contentHolder = new ChildHolder(view);
         }
 
@@ -438,13 +441,13 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
         }
 
         @Override
-        public ChildHolder getView(ViewGroup viewGroup, int viewType) {
+        public ChildHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             return contentHolder;
         }
 
 
         @Override
-        public void bindView(ViewGroup viewGroup, ChildHolder holder, int position) {
+        public void onBindViewHolder(ViewGroup viewGroup, ChildHolder holder, int position) {
 
         }
 
