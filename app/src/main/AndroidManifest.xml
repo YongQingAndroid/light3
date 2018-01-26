@@ -6,30 +6,30 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
     <application
+        android:name=".test.MyApplaction"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name="lightplugin.posun.com.fuchuang.OrmTestActivity" />
         <activity
             android:name=".ListActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".LightUIActivity"></activity>
+        <activity android:name=".LightUIActivity" />
         <activity android:name=".Main2Activity">
+
+        </activity>
+        <activity android:name=".test.LightRichActivity"></activity>
+        <activity android:name=".test.ListViewActivity"></activity>
+        <activity android:name=".test.Main3Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".test.LightRichActivity">
-
-        </activity>
-        <activity android:name=".test.ListViewActivity">
-
         </activity>
     </application>
 

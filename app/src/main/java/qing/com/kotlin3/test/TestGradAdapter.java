@@ -15,7 +15,7 @@ import qing.com.kotlin3.R;
  * 邮箱：zyq@posun.com
  */
 
-public class TestGradAdapter extends LightFormAdapterManager.LightGridAdapter<TestGradAdapter.TestHolder> {
+public class TestGradAdapter extends LightFormAdapterManager.LightRecyclerGridAdapter<TestGradAdapter.TestHolder> {
     int cont = 5;
 
     public TestGradAdapter(int spanCount) {
@@ -41,13 +41,13 @@ public class TestGradAdapter extends LightFormAdapterManager.LightGridAdapter<Te
     }
 
     @Override
-    public TestHolder getView(ViewGroup viewGroup,int viewType) {
+    public TestHolder onCreateViewHolder(ViewGroup viewGroup,int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
         return new TestHolder(view);
     }
 
     @Override
-    public void bindView(ViewGroup viewGroup, TestHolder holder, int position) {
+    public void onBindViewHolder(ViewGroup viewGroup, TestHolder holder, int position) {
         holder.textView.setText(position + "");
     }
 

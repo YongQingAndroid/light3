@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.posun.lightui.recyclerview.LightFormAdapterManager;
 
 import qing.com.kotlin3.test.TestGradAdapter;
+import qing.com.kotlin3.test.TestGroupAdapter;
 import qing.com.kotlin3.test.TestListAdapter;
 
 public class Main2Activity extends AppCompatActivity {
@@ -20,13 +21,14 @@ public class Main2Activity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         final LightFormAdapterManager adapterManager = new LightFormAdapterManager(this);
         View titleView = getLayoutInflater().inflate(R.layout.fix_uilayout, null);
-        LightFormAdapterManager.LightFixedAdapter fixedAdapter = new LightFormAdapterManager.LightFixedAdapter(titleView);
+        LightFormAdapterManager.LightRecyclerFixedAdapter fixedAdapter = new LightFormAdapterManager.LightRecyclerFixedAdapter(titleView);
         final TestGradAdapter testGradAdapter = new TestGradAdapter(3);
         /***********************************************/
         adapterManager.addAdapter(fixedAdapter);
         adapterManager.addAdapter(testGradAdapter);
         adapterManager.addAdapter(new TestGradAdapter(4));
         adapterManager.addAdapter(new TestListAdapter());
+        adapterManager.addAdapter(new TestGroupAdapter());
 
         adapterManager.setRecyclerView(recyclerView);
         /**********************************************************/

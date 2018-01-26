@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:background="@mipmap/bg"
+    android:layout_height="50dp"
+    android:background="@color/colorAccent"
     android:orientation="vertical">
 
     <TextView
@@ -12,6 +12,7 @@
         android:gravity="center"
         android:padding="5dp"
         android:text="王子华"
+        android:textColor="#fff"
         android:textSize="18sp" />
 
     <TextView
@@ -20,6 +21,7 @@
         android:layout_below="@id/name"
         android:padding="5dp"
         android:text="某个很牛逼的地方"
+        android:visibility="gone"
         android:textSize="12sp" />
 
     <TextView
@@ -27,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center"
+        android:visibility="gone"
         android:text="────────── 共2个 ──────────" />
 
     <ImageView

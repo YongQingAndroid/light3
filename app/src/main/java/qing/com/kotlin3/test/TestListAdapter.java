@@ -16,10 +16,10 @@ import qing.com.kotlin3.R;
  * 邮箱：zyq@posun.com
  */
 
-public class TestListAdapter extends LightFormAdapterManager.LightListAdapter {
+public class TestListAdapter extends LightFormAdapterManager.LightRecyclerListAdapter {
     @Override
     public int getItemCount() {
-        return 150;
+        return 50;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TestListAdapter extends LightFormAdapterManager.LightListAdapter {
     }
 
     @Override
-    public LightFormAdapterManager.ChildHolder getView(ViewGroup viewGroup, int viewType) {
+    public LightFormAdapterManager.ChildHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_layout, viewGroup, false);
         if (viewType == 1) {
             return new TestHolder(view);
@@ -37,7 +37,7 @@ public class TestListAdapter extends LightFormAdapterManager.LightListAdapter {
     }
 
     @Override
-    public void bindView(ViewGroup viewGroup, LightFormAdapterManager.ChildHolder holder, int position) {
+    public void onBindViewHolder(ViewGroup viewGroup, LightFormAdapterManager.ChildHolder holder, int position) {
         if (holder instanceof TestHolder) {
             ((TestHolder) holder).textView.setText("" + position);
         } else {
