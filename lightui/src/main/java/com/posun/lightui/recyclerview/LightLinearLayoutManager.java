@@ -473,6 +473,7 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
         // 3) fill towards end, stacking from top
         // 4) scroll to fulfill requirements like stack from bottom.
         // create layout state
+
         if (DEBUG) {
             Log.d(TAG, "is pre layout:" + state.isPreLayout());
         }
@@ -1461,7 +1462,7 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
             recycleViewsFromStart(recycler, layoutState.mScrollingOffset);
         }
     }
-
+     /**非常重要的方法**/
     /**
      * The magic functions :). Fills the given layout, defined by the layoutState. This is fairly
      * independent from the rest of the {@link android.support.v7.widget.LinearLayoutManager}
@@ -1615,7 +1616,6 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
             RefectRecyclerView.setMeasureSpecs(this, 10, 10);
         }
     }
-
     boolean shouldMeasureTwice() {
         return getHeightMode() != View.MeasureSpec.EXACTLY
                 && getWidthMode() != View.MeasureSpec.EXACTLY
@@ -2162,6 +2162,7 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
                 return nextViewFromScrapList();
             }
             final View view = recycler.getViewForPosition(mCurrentPosition);
+            Log.e("qing","qingmCurrentPosition"+mCurrentPosition);
             mCurrentPosition += mItemDirection;
             return view;
         }

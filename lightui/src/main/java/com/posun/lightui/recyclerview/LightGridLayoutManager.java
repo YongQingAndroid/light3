@@ -16,6 +16,7 @@
 package com.posun.lightui.recyclerview;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.Arrays;
 
@@ -691,6 +693,12 @@ public class LightGridLayoutManager extends LightLinearLayoutManager {
             }
             result.mFocusable |= view.isFocusable();
         }
+        /*********************************此处拓展其他View***/
+//        TextView textView=new TextView(mSet[0].getContext());
+//        textView.setText("66666666666666666");
+//        textView.setTextColor(Color.RED);
+//        RefectRecyclerView.addView(this,textView,true);
+        /*********************************************/
         Arrays.fill(mSet, null);
     }
 

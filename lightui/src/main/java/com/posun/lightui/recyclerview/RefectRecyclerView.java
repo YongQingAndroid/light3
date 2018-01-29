@@ -42,6 +42,7 @@ public class RefectRecyclerView {
         return false;
     }
 
+    //
     public static Rect getmDecorInsets(Object object) {
         try {
             String name = "mDecorInsets";
@@ -53,6 +54,32 @@ public class RefectRecyclerView {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Object mChildHelper(Object object) {
+        try {
+            String name = "mChildHelper";
+            Field field = catch_map.containsKey(name) ? (Field) catch_map.get(name) : RecyclerView.LayoutManager.class.getDeclaredField(name);
+            if (!field.isAccessible())
+                field.setAccessible(true);
+            return field.get(object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void addView(Object object, View child, boolean hidden) {
+        try {
+            Object obj = mChildHelper(object);
+            String name = "addView";
+            Method method = catch_map.containsKey(name) ? (Method) catch_map.get(name) : RecyclerView.ViewHolder.class.getDeclaredMethod(name, new Class[]{View.class, boolean.class});
+            if (!method.isAccessible())
+                method.setAccessible(true);
+            method.invoke(obj,child,hidden);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static boolean shouldMeasure(Object object, String name, Object... values) {
