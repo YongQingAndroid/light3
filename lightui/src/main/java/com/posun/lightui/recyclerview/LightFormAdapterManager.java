@@ -1,7 +1,6 @@
 package com.posun.lightui.recyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -114,7 +113,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
         LightGridLayoutManager mLightGridLayoutManager = new LightGridLayoutManager(recyclerView.getContext(), LightFormAdapterManager.this.spanCount);
         recyclerView.setLayoutManager(mLightGridLayoutManager);
         recyclerView.setAdapter(this);
-        mLightGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        mLightGridLayoutManager.setSpanSizeLookup(new LightGridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 LightFormBaseAdapterInterface mLightFormBaseAdapterInterface = getAdapterByPosition(position);

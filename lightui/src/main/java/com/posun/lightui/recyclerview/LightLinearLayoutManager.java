@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package qing.com.kotlin3.test.refectrecyclerview;
-
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
+package com.posun.lightui.recyclerview;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -40,8 +37,11 @@ import android.view.accessibility.AccessibilityEvent;
 
 import java.util.List;
 
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
+
 /**
- * A {@link android.support.v7.widget.RecyclerView.LayoutManager} implementation which provides
+ * A {@link RecyclerView.LayoutManager} implementation which provides
  * similar functionality to {@link android.widget.ListView}.
  */
 public class LightLinearLayoutManager extends RecyclerView.LayoutManager implements
@@ -380,8 +380,8 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
      * laid out at the end of the UI, second item is laid out before it etc.
      * <p>
      * For horizontal layouts, it depends on the layout direction.
-     * When set to true, If {@link android.support.v7.widget.RecyclerView} is LTR, than it will
-     * layout from RTL, if {@link android.support.v7.widget.RecyclerView}} is RTL, it will layout
+     * When set to true, If {@link RecyclerView} is LTR, than it will
+     * layout from RTL, if {@link RecyclerView}} is RTL, it will layout
      * from LTR.
      * <p>
      * If you are looking for the exact same behavior of
@@ -1007,7 +1007,7 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
     /**
      * Scroll to the specified adapter position with the given offset from resolved layout
      * start. Resolved layout start depends on {@link #getReverseLayout()},
-     * {@link ViewCompat#getLayoutDirection(android.view.View)} and {@link #getStackFromEnd()}.
+     * {@link ViewCompat#getLayoutDirection(View)} and {@link #getStackFromEnd()}.
      * <p>
      * For example, if layout is {@link #VERTICAL} and {@link #getStackFromEnd()} is true, calling
      * <code>scrollToPositionWithOffset(10, 20)</code> will layout such that
@@ -1357,7 +1357,7 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
      * <p>
      * Checks both layout position and visible position to guarantee that the view is not visible.
      *
-     * @param recycler Recycler instance of {@link android.support.v7.widget.RecyclerView}
+     * @param recycler Recycler instance of {@link RecyclerView}
      * @param dt       This can be used to add additional padding to the visible area. This is used
      *                 to detect children that will go out of bounds after scrolling, without
      *                 actually moving them.
@@ -1402,7 +1402,7 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
      * <p>
      * Checks both layout position and visible position to guarantee that the view is not visible.
      *
-     * @param recycler Recycler instance of {@link android.support.v7.widget.RecyclerView}
+     * @param recycler Recycler instance of {@link RecyclerView}
      * @param dt       This can be used to add additional padding to the visible area. This is used
      *                 to detect children that will go out of bounds after scrolling, without
      *                 actually moving them.
@@ -1447,8 +1447,8 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
      * @param layoutState Current layout state. Right now, this object does not change but
      *                    we may consider moving it out of this view so passing around as a
      *                    parameter for now, rather than accessing {@link #mLayoutState}
-     * @see #recycleViewsFromStart(android.support.v7.widget.RecyclerView.Recycler, int)
-     * @see #recycleViewsFromEnd(android.support.v7.widget.RecyclerView.Recycler, int)
+     * @see #recycleViewsFromStart(RecyclerView.Recycler, int)
+     * @see #recycleViewsFromEnd(RecyclerView.Recycler, int)
      * @see android.support.v7.widget.LinearLayoutManager.LayoutState#mLayoutDirection
      */
     private void recycleByLayoutState(RecyclerView.Recycler recycler, LayoutState layoutState) {
@@ -1606,9 +1606,14 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
 //        setMeasureSpecs(
 //                View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(), View.MeasureSpec.EXACTLY),
 //                View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(), View.MeasureSpec.EXACTLY));
-//        if (recyclerView != null) {
+        if (recyclerView != null) {
 //            RefectRecyclerView.dispatchLayoutStep2(recyclerView);
-//        }
+//            RefectRecyclerView.setMeasureSpecs(this, View.MeasureSpec.makeMeasureSpec(recyclerView.getMeasuredWidth(), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(recyclerView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
+            if (recyclerView.getMeasuredWidth() != 0)
+                RefectRecyclerView.setMeasureSpecs(this, 10, 10);
+        } else {
+            RefectRecyclerView.setMeasureSpecs(this, 10, 10);
+        }
     }
 
     boolean shouldMeasureTwice() {
@@ -2281,8 +2286,8 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
             dest.writeInt(mAnchorLayoutFromEnd ? 1 : 0);
         }
 
-        public static final Parcelable.Creator<SavedState> CREATOR
-                = new Parcelable.Creator<SavedState>() {
+        public static final Creator<SavedState> CREATOR
+                = new Creator<SavedState>() {
             @Override
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);

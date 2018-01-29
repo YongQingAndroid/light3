@@ -1,4 +1,4 @@
-package qing.com.kotlin3.test.refectrecyclerview;
+package com.posun.lightui.recyclerview;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
@@ -65,6 +65,23 @@ public class RefectRecyclerView {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /***
+     * 设置子视图宽高
+     * @param object
+     * @param values
+     */
+    public static void setMeasureSpecs(Object object, Object... values) {
+        try {
+            String name = "setMeasureSpecs";
+            Method method = catch_map.containsKey(name) ? (Method) catch_map.get(name) : RecyclerView.LayoutManager.class.getDeclaredMethod(name, new Class[]{int.class, int.class});
+            if (!method.isAccessible())
+                method.setAccessible(true);
+            method.invoke(object, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void dispatchLayoutStep2(Object object) {
