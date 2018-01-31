@@ -17,7 +17,13 @@
         <activity android:name="lightplugin.posun.com.fuchuang.OrmTestActivity" />
         <activity
             android:name=".ListActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".LightUIActivity" />
         <activity android:name=".Main2Activity">
 
@@ -25,11 +31,6 @@
         <activity android:name=".test.LightRichActivity"></activity>
         <activity android:name=".test.ListViewActivity"></activity>
         <activity android:name=".test.Main3Activity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

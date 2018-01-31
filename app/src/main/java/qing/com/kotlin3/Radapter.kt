@@ -13,8 +13,8 @@ import qing.com.lightdatabinding.LightDataBingding
  */
 
 class Radapter : RecyclerView.Adapter<Radapter.Holder>() {
-    var string_array: Array<String> = arrayOf("How", "Are", "You", "How", "Are", "You", "How", "Are", "You", "How"
-            , "Are", "You", "How", "Are", "You", "How", "Are", "You", "How", "Are", "You")
+//    var string_array: Array<String> = arrayOf("How", "Are", "You", "How", "Are", "You", "How", "Are", "You", "How"
+//            , "Are", "You", "How", "Are", "You", "How", "Are", "You", "How", "Are", "You")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder? {
         var view = LayoutInflater.from(parent!!.context).inflate(R.layout.list_item, parent, false)
@@ -22,11 +22,12 @@ class Radapter : RecyclerView.Adapter<Radapter.Holder>() {
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.bind!!.dataNotify(string_array[position])
+
+        holder.bind!!.dataNotify((position.toString()))
     }
 
     override fun getItemCount(): Int {
-        return string_array.size
+        return 30
     }
 
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
