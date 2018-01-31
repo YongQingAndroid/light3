@@ -1616,11 +1616,11 @@ public class LightLinearLayoutManager extends RecyclerView.LayoutManager impleme
             RefectRecyclerView.setMeasureSpecs(this, 10, 10);
         }
     }
-    boolean shouldMeasureTwice() {
-        return getHeightMode() != View.MeasureSpec.EXACTLY
-                && getWidthMode() != View.MeasureSpec.EXACTLY
-                && RefectRecyclerView.hasFlexibleChildInBothOrientations(this);
-    }
+//    boolean shouldMeasureTwice() {
+//        return getHeightMode() != View.MeasureSpec.EXACTLY
+//                && getWidthMode() != View.MeasureSpec.EXACTLY
+//                && RefectRecyclerView.hasFlexibleChildInBothOrientations(this);
+//    }
 
     /**
      * Converts a focusDirection to orientation.

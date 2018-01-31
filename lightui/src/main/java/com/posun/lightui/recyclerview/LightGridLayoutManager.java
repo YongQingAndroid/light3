@@ -694,13 +694,19 @@ public class LightGridLayoutManager extends LightLinearLayoutManager {
             result.mFocusable |= view.isFocusable();
         }
         /*********************************此处拓展其他View***/
-//        TextView textView=new TextView(mSet[0].getContext());
-//        textView.setText("66666666666666666");
-//        textView.setTextColor(Color.RED);
-//        RefectRecyclerView.addView(this,textView,true);
+//        if (!is) {
+//            TextView textView = new TextView(mSet[0].getContext());
+//            textView.setText("66666666666666666");
+//            textView.setTextColor(Color.RED);
+//            textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//            RefectRecyclerView.addView(this, textView, false);
+//            is = true;
+//        }
         /*********************************************/
         Arrays.fill(mSet, null);
     }
+
+    boolean is = false;
 
     /**
      * Measures a child with currently known information. This is not necessarily the child's final

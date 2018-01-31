@@ -30,17 +30,17 @@ public class RefectRecyclerView {
         return false;
     }
 
-    public static boolean hasFlexibleChildInBothOrientations(Object object) {
-        try {
-            Method method = RecyclerView.ViewHolder.class.getDeclaredMethod("hasFlexibleChildInBothOrientations", new Class[]{});
-            if (!method.isAccessible())
-                method.setAccessible(true);
-            return (Boolean) method.invoke(object);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    public static boolean hasFlexibleChildInBothOrientations(Object object) {
+//        try {
+//            Method method = RecyclerView.ViewHolder.class.getDeclaredMethod("hasFlexibleChildInBothOrientations", new Class[]{});
+//            if (!method.isAccessible())
+//                method.setAccessible(true);
+//            return (Boolean) method.invoke(object);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     //
     public static Rect getmDecorInsets(Object object) {
@@ -73,10 +73,11 @@ public class RefectRecyclerView {
         try {
             Object obj = mChildHelper(object);
             String name = "addView";
-            Method method = catch_map.containsKey(name) ? (Method) catch_map.get(name) : RecyclerView.ViewHolder.class.getDeclaredMethod(name, new Class[]{View.class, boolean.class});
+            Method method = catch_map.containsKey(name) ? (Method) catch_map.get(name) : Class.forName("android.support.v7.widget.ChildHelper").getDeclaredMethod(name, new Class[]{View.class, boolean.class});
+
             if (!method.isAccessible())
                 method.setAccessible(true);
-            method.invoke(obj,child,hidden);
+            method.invoke(obj, child, hidden);
         } catch (Exception e) {
             e.printStackTrace();
         }
