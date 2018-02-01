@@ -27,7 +27,7 @@ class Radapter : RecyclerView.Adapter<Radapter.Holder>() {
     }
 
     override fun getItemCount(): Int {
-        return 30
+        return 100
     }
 
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
