@@ -15,7 +15,9 @@ import java.util.List;
  */
 
 public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
-    private int totalHeight = 0;
+    private int totalHeight = 0, totalWight = 0;
+    private int spanCount = 3, beforSpan = 0, afterSpan = 0;
+    int itemCount = 0;
 
     @Override
     public RecyclerView.LayoutParams generateDefaultLayoutParams() {
@@ -28,33 +30,42 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
 
     }
 
-    int itemCount = 0;
+    private SpanSizeLookup mSpanSizeLookup;
+
+    public void setSpanSizeLookup(SpanSizeLookup spanSizeLookup) {
+        mSpanSizeLookup = spanSizeLookup;
+    }
+
+    public LightDefultLayoutManager(Context context, int spanCount) {
+        this.spanCount = spanCount;
+    }
+
+    private int getItemSpan(int position) {
+        if (mSpanSizeLookup != null) {
+            return mSpanSizeLookup.getSpanSize(position);
+        }
+        return 1;
+    }
+
 
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         //在布局之前，将所有的子View先Detach掉，放入到Scrap缓存中
         detachAndScrapAttachedViews(recycler);
+        beforSpan = 0;
+        afterSpan = 0;
         itemCount = getItemCount();
         //定义竖直方向的偏移量
         int offsetY = 0;
         totalHeight = getHeight();
+        totalWight = getWidth();
         int i = 0;
-        while (offsetY < totalHeight) {
-            //这里就是从缓存里面取出
-            View view = recycler.getViewForPosition(i);
-            //将View加入到RecyclerView中
-            addView(view);
-            //对子View进行测量
-            measureChildWithMargins(view, 0, 0);
-            //把宽高拿到，宽高都是包含ItemDecorate的尺寸
-            int width = getDecoratedMeasuredWidth(view);
-            int height = getDecoratedMeasuredHeight(view);
-            //最后，将View布局
-            layoutDecorated(view, 0, offsetY, width, offsetY + height);
-            //将竖直方向偏移量增大height
+        while (offsetY < totalHeight && haveNext(i)) {
+            int height = addBeforItem(recycler, i, offsetY);
             offsetY += height;
             i++;
         }
+        super.onLayoutChildren(recycler, state);
     }
 
     @Override
@@ -62,41 +73,103 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         return true;
     }
 
-    private int verticalScrollOffset;
-
     @Override
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
-        /***添加View**/
+        dy = fillLayout(dy, recycler);
+        return dy;
+    }
+
+    private int fillLayout(int dy, RecyclerView.Recycler recycler) {
+        Log.e("fillLayout", getChildCount() + "");
         if (dy > 0) {
             View lastView = getChildAt(getChildCount() - 1);
-            int position = getPosition(lastView);
-            if (position == itemCount - 1) {
-                offsetChildrenVertical(0);
-                return 0;
+            int addheight = (int) (lastView.getY() + lastView.getMeasuredHeight());
+            addheight = addheight - totalHeight;
+            int position = getPosition(lastView) + 1;
+            int offsetY = (int) lastView.getY() + lastView.getMeasuredHeight();
+            while (haveNext(position) && addheight <= dy) {
+                int height = addBeforItem(recycler, position, offsetY);
+                offsetY += height;
+                addheight += height;
+                position++;
             }
-            int addheight=0;
-            if (lastView.getY() < totalHeight) {
-                View view = recycler.getViewForPosition(position + 1);
-                addView(view);
-                measureChildWithMargins(view, 0, 0);
-                int width = getDecoratedMeasuredWidth(view);
-                int height = getDecoratedMeasuredHeight(view);
-                int offsetY = (int) lastView.getY() + lastView.getMeasuredHeight();
-                layoutDecorated(view, 0, offsetY, width, offsetY + height);
+            if (dy > addheight) {
+                dy = addheight;
             }
             offsetChildrenVertical(-dy);
-            recyclerView(recycler,true);
+            recyclerView(true, recycler);
         } else {
-
+            View fistView = getChildAt(0);
+            int addheight = (int) Math.abs(fistView.getY());
+            int position = getPosition(fistView) - 1;
+            int offsetY = (int) fistView.getY();
+            while (position >= 0 && addheight <= Math.abs(dy)) {
+                int height = addAfterItem(recycler, position, offsetY);
+                offsetY -= height;
+                addheight += height;
+                position--;
+            }
+            if (Math.abs(dy) > addheight) {
+                dy = -addheight;
+            }
+            offsetChildrenVertical(-dy);
+            recyclerView(false, recycler);
         }
         return dy;
     }
 
-    private void recyclerView(RecyclerView.Recycler recycler,boolean recyclerBefor) {
-        if(recyclerBefor){
-            getBeforRecyviews();
-        }else{
-            getAfterRecyviews();
+    private int addAfterItem(RecyclerView.Recycler recycler, int position, int offsetY) {
+        View view = recycler.getViewForPosition(position);
+        addView(view, 0);//很重要
+        int span = getItemSpan(position);
+        if (beforSpan >= spanCount) {
+            beforSpan = 0;
+        }
+        measureChild(view, 0, 0);
+        int width = getDecoratedMeasuredWidth(view);
+        int height = getDecoratedMeasuredHeight(view);
+        layoutDecoratedWithMargins(view, 0, offsetY - height, width, offsetY);
+        return height;
+    }
+
+    private int addBeforItem(RecyclerView.Recycler recycler, int position, int offsetY) {
+        View view = recycler.getViewForPosition(position);
+
+        int span = getItemSpan(position);
+        if (beforSpan >= spanCount) {
+            beforSpan = 0;
+        }
+        int item = totalWight / spanCount;
+        int wightUsed = item * (spanCount - span);
+        measureChild(view, wightUsed, 0);
+        int width = getDecoratedMeasuredWidth(view);
+        int height = getDecoratedMeasuredHeight(view);
+        int left = beforSpan * item;
+
+        addView(view);
+        Log.e("qing", "left=" + left);
+//        left = 360;
+        int right = width + left;
+        layoutDecoratedWithMargins(view, left, offsetY, right, offsetY + height);
+        if (beforSpan != 0 && (beforSpan + span) <= spanCount) {
+            beforSpan += span;
+            return 0;
+        } else {
+            beforSpan += span;
+            return height;
+        }
+    }
+
+    private boolean haveNext(int position) {
+        return position < itemCount;
+    }
+
+    private void recyclerView(boolean up, RecyclerView.Recycler recycler) {
+        recyviews.clear();
+        if (up) {
+            RecyclerBeforviews(0);
+        } else {
+            RecyclerAfterviews(0);
         }
         for (View view : recyviews) {
             removeAndRecycleView(view, recycler);
@@ -105,31 +178,36 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
 
     private List<View> recyviews = new ArrayList<>();
 
-    private void getBeforRecyviews() {
-        recyviews.clear();
+    private void RecyclerBeforviews(int dy) {
         int i = 0;
         int count = getChildCount();
         while (i < count) {
             View view = getChildAt(i);
-            if ((view.getY() + view.getMeasuredHeight()) > 0) {//跌代一直到遇到不能回收的停止
+            if ((view.getY() + view.getMeasuredHeight()) >= dy) {//跌代一直到遇到不能回收的停止
                 return;
             }
             recyviews.add(view);
             i++;
         }
     }
-    private void getAfterRecyviews() {
+
+    private void RecyclerAfterviews(int dy) {
         int count = getChildCount();
-        int i = count-1;
-        while (i >0) {
+        int i = count - 1;
+        while (i >= 0) {
             View view = getChildAt(i);
-            if ((view.getY() + view.getMeasuredHeight()) <=totalHeight) {//跌代一直到遇到不能回收的停止
+            if (view.getY() <= (totalHeight - dy)) {//跌代一直到遇到不能回收的停止
                 return;
             }
             recyviews.add(view);
-            i++;
+            i--;
         }
     }
+
+    public interface SpanSizeLookup {
+        int getSpanSize(int position);
+    }
+
     private int getHorizontalSpace() {
         return getWidth() - getPaddingLeft() - getPaddingRight();
     }
