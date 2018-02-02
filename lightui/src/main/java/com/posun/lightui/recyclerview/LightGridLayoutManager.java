@@ -374,6 +374,7 @@ public class LightGridLayoutManager extends LightLinearLayoutManager {
     @Override
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler,
                                   RecyclerView.State state) {
+        Log.i("qing", "dy" + dy);
         updateMeasurements();
         ensureViewSet();
         return super.scrollVerticallyBy(dy, recycler, state);

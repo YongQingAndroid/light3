@@ -27,7 +27,6 @@ public class BaseCalenderView extends View {
 
     public void setIsmonth(boolean arg) {
         mCalenderManager.setIsmonth(arg);
-//        invalidate();
     }
 
     public BaseCalenderView(Context context, @Nullable AttributeSet attrs) {
@@ -60,10 +59,6 @@ public class BaseCalenderView extends View {
                 int item = mCalenderManager.cilck((int) event.getX(), (int) event.getY());
                 DateTime selectDate = getDateTimebyItem(item);
                 int cha = selectDate.getMonthOfYear() - dateTime.getMonthOfYear();
-//                if (cha == 0) {
-//                    mCalenderManager.setSelect(item);
-//                    invalidate();
-//                }
                 int cha_year = selectDate.getYear() - dateTime.getYear();
                 if (cha_year != 0) {
                     cha = cha_year;
@@ -80,30 +75,34 @@ public class BaseCalenderView extends View {
         return calenderBean.getDateTime();
     }
 
-    /**
-     * @param arg 当值为-1是重置当前UI
-     *            该参数为日期的位置非日期
-     */
-    public void resetSelect(int arg) {
-        if (arg == -1) {
-            mCalenderManager.removeSelect();
-        } else {
-            mCalenderManager.setSelect(arg);
-        }
+    public void removeSelect() {
+        mCalenderManager.removeSelect();
         invalidate();
     }
 
     public void validate(DateTime dateTime, DateTime mSelect) {
         this.dateTime = dateTime;
         mCalenderManager.selectpoint = -1;
-        if (mSelect != null && dateTime.getYear() == mSelect.getYear() && mSelect.getMonthOfYear() == dateTime.getMonthOfYear()) {
-            DateTime arg1 = mSelect.dayOfMonth().withMinimumValue();
-            int index = arg1.getDayOfWeek() % 7 + mSelect.getDayOfMonth() - 1;
-            mCalenderManager.setSelect(index);
-        }
+        mCalenderManager.selectDate = mSelect;
         mCalenderManager.removeCatch();
         invalidate();
         Log.i("Tag", "validateDateTime");
+    }
+
+    public void clean(boolean ismonth) {
+        mCalenderManager.ismonth = ismonth;
+        mCalenderManager.selectpoint = -1;
+        mCalenderManager.selectDate = null;
+        mCalenderManager.removeCatch();
+    }
+
+    private int praseDateForIndex(DateTime mSelect) {
+        if (mSelect != null && dateTime.getYear() == mSelect.getYear() && mSelect.getMonthOfYear() == dateTime.getMonthOfYear()) {
+            DateTime arg1 = mSelect.dayOfMonth().withMinimumValue();
+            int index = arg1.getDayOfWeek() % 7 + mSelect.getDayOfMonth() - 1;
+            return index;
+        }
+        return 0;
     }
 
     public void validate(DateTime mSelect) {
@@ -115,12 +114,12 @@ public class BaseCalenderView extends View {
             index = mSelect.getDayOfWeek() % 7;
         }
         mCalenderManager.setSelect(index);
+        mCalenderManager.selectDate = mSelect;
         invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        mCalenderManager.drawTitle(canvas);
         mCalenderManager.drawCalenderDate(dateTime == null ? DateTime.now() : dateTime, canvas);
         super.onDraw(canvas);
     }

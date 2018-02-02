@@ -16,12 +16,28 @@ public class CalenderAdapter extends BasePagerAdapter {
     private boolean ismonth = true;
 
     public void setIsmonth(boolean ismonth) {
-        validataAll(ismonth);
-        this.ismonth = ismonth;
+//        validataAll(ismonth);
+//        this.ismonth = ismonth;
     }
 
     private void validataAll(boolean arg) {
-        DateTime changedateTime = startDate;
+        DateTime changedateTime = null;
+
+//        if (arg) {
+//            DateTime dateTime1 = startDate.dayOfMonth().withMinimumValue();
+//            if (selectDate != null) {
+//                int selectWeek = selectDate.getWeekOfWeekyear();
+//                int startWeek = dateTime1.getWeekOfWeekyear();
+//                if (selectWeek == startWeek || (startWeek - selectWeek) <= (dateTime1.getDayOfWeek() % 7)) {
+//                    changedateTime = selectDate;
+//                } else {
+//                    changedateTime = dateTime1;
+//                }
+//            }
+//        } else {
+//
+//        }
+
         int size = viewPager.getChildCount();
         for (int i = 0; i < size; i++) {
             BaseCalenderView item = (BaseCalenderView) viewPager.getChildAt(i);
@@ -31,8 +47,7 @@ public class CalenderAdapter extends BasePagerAdapter {
         if (viewcatch != null)
             for (View view : viewcatch) {
                 BaseCalenderView item = (BaseCalenderView) view;
-                item.setIsmonth(arg);
-                resitDate(item, changedateTime, arg);
+                item.clean(arg);
             }
     }
 
@@ -138,7 +153,7 @@ public class CalenderAdapter extends BasePagerAdapter {
                 if (isSameView(selectDate, catch_item)) {
                     catch_item.validate(selectDate);
                 } else {
-                    catch_item.resetSelect(-1);
+                    catch_item.removeSelect();
                 }
             }
             if (listener != null)

@@ -15,6 +15,7 @@ import java.util.Map;
 public class LightGroupRecycler {
     private List<View> groupCatch = new ArrayList<>();
     private Map<View, Integer> ViewPosition = new HashMap<>();
+    private Map<Integer, Integer> groupUpperSpan = new HashMap<>();
     private WeakReference<RecyclerView> recyclerView;
     private LightChildHelper lightChildHelper;
 
@@ -24,6 +25,22 @@ public class LightGroupRecycler {
         if (groupCatch.size() < 10) {
             groupCatch.add(view);
         }
+    }
+
+    public void addGroupUpperSpan(int position, int span) {
+        groupUpperSpan.put(position, span);
+    }
+
+    public int getGroupUpperSpan(int position, int totalSpan) {
+        if (groupUpperSpan.containsKey(position))
+            return totalSpan - groupUpperSpan.get(position);
+        return 0;
+    }
+
+    public RecyclerView getRecyclerView() {
+        if (recyclerView != null && recyclerView.get() != null)
+            return recyclerView.get();
+        return null;
     }
 
     public LightGroupRecycler(RecyclerView.LayoutManager layoutManager) {

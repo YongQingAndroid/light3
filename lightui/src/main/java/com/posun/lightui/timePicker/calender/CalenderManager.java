@@ -10,6 +10,7 @@ import com.posun.lightui.QlightUnit;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,7 @@ public class CalenderManager {
     private int height = 600;
     private int font_size = 20, lunar_size = 15;
     protected int size = 0, selectpoint = -1;
+    protected DateTime selectDate;
     private List<CalenderBean> calenderBeanList;
     protected boolean ismonth = true;
 
@@ -56,6 +58,7 @@ public class CalenderManager {
     }
 
     public void removeSelect() {
+        selectDate = null;
         if (selectpoint == -1)
             return;
         if (calenderBeanList != null && calenderBeanList.size() > selectpoint)
@@ -167,10 +170,10 @@ public class CalenderManager {
             calenderBeanList = new ArrayList<>();
         }
         for (int i = start; i > 0; i--) {
-            addList(dateTime, 0 - i, CalenderState.WEEK);
+            addList(dateTime, 0 - i, CalenderState.WEEK, true);
         }
         for (int i = 0; i < 7 - start; i++) {
-            addList(dateTime, i, CalenderState.WEEK);
+            addList(dateTime, i, CalenderState.WEEK, true);
         }
         return calenderBeanList;
     }
@@ -212,6 +215,33 @@ public class CalenderManager {
         CalenderBean calenderBean = new CalenderBean();
         calenderBean.setDateTime(startDate.plusDays(i));
         calenderBean.setCalenderstate(state);
+        if (CalenderState.OUT!=state&&selectpoint == -1 && selectDate != null && isSameDay(selectDate, calenderBean.dateTime)) {
+            selectpoint = calenderBeanList.size();
+            calenderBean.setIscheck(true);
+        }
+        calenderBean.setRemark(new Lunar(calenderBean.getDateTime().toCalendar(Locale.CHINA)).getChinaDayString());
+        calenderBeanList.add(calenderBean);
+    }
+
+    private boolean isSameDay(DateTime arg, DateTime arg1) {
+        if (arg.getYear() == arg1.getYear() && arg.getDayOfYear() == arg1.getDayOfYear()) {
+            return true;
+        }
+        return false;
+    }
+
+    private void addList(DateTime startDate, int i, CalenderState state, boolean isweek) {
+        CalenderBean calenderBean = new CalenderBean();
+        calenderBean.setDateTime(startDate.plusDays(i));
+        if (calenderBean.getDateTime().getDayOfYear() == DateTime.now().getDayOfYear()) {
+            calenderBean.setCalenderstate(CalenderState.NOW);
+        } else {
+            calenderBean.setCalenderstate(state);
+        }
+        if (CalenderState.OUT!=state&&selectpoint == -1 && selectDate != null && isSameDay(selectDate, calenderBean.dateTime)) {
+            selectpoint = calenderBeanList.size();
+            calenderBean.setIscheck(true);
+        }
         calenderBean.setRemark(new Lunar(calenderBean.getDateTime().toCalendar(Locale.CHINA)).getChinaDayString());
         calenderBeanList.add(calenderBean);
     }
@@ -295,13 +325,20 @@ public class CalenderManager {
         }
     }
 
+
     public void setSelect(int arg) {
         if (calenderBeanList != null && calenderBeanList.size() > arg) {
             if (selectpoint != -1 && calenderBeanList.size() > selectpoint)
                 calenderBeanList.get(selectpoint).setIscheck(false);
             calenderBeanList.get(arg).setIscheck(true);
+            selectDate = calenderBeanList.get(arg).dateTime;
         }
         selectpoint = arg;
+
+    }
+
+    public void setSelect(DateTime arg) {
+        this.selectDate = arg;
     }
 
     public int cilck(int x, int y) {
