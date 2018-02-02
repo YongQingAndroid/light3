@@ -2,14 +2,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#fff"
     android:padding="1dp">
 
     <TextView
         android:id="@+id/text_item"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/colorAccent"
+        android:background="#7fFF4081"
         android:gravity="center"
         android:text="1111"
         android:textColor="#fff" />

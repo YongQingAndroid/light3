@@ -7,48 +7,53 @@
     tools:context="qing.com.kotlin3.LightUIActivity">
 
 
-        <Button
-            android:id="@+id/timepicker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="timepicker" />
+    <Button
+        android:id="@+id/timepicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="timepicker"
+        android:visibility="gone" />
 
-        <Button
-            android:id="@+id/citypicker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="citypicker" />
+    <Button
+        android:id="@+id/citypicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="citypicker"
+        android:visibility="gone" />
 
-        <Button
-            android:id="@+id/finger"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="验证指纹" />
+    <Button
+        android:id="@+id/finger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="验证指纹" />
 
-        <com.posun.lightui.timePicker.calender.LightCalenderView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/lightcalenderview"
-            ></com.posun.lightui.timePicker.calender.LightCalenderView>
+    <com.posun.lightui.timePicker.calender.LightCalenderView
+        android:id="@+id/lightcalenderview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"></com.posun.lightui.timePicker.calender.LightCalenderView>
 
-        <com.posun.lightui.citypicker.CityView
-            android:layout_width="270dp"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:visibility="gone"></com.posun.lightui.citypicker.CityView>
+    <com.posun.lightui.citypicker.CityView
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:visibility="gone"></com.posun.lightui.citypicker.CityView>
 
     <com.posun.lightui.dragView.LightDrageView
         android:id="@+id/lightdrageview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="item" />
     </com.posun.lightui.dragView.LightDrageView>
+
+    <qing.com.kotlin3.test.LightTestView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lighttestview"
+        />
 </LinearLayout>
