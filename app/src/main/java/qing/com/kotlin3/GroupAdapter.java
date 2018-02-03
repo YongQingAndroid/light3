@@ -1,10 +1,12 @@
 package qing.com.kotlin3;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.posun.lightui.recyclerview.LightGroupRecycler;
 
@@ -40,16 +42,32 @@ public class GroupAdapter extends RecyclerView.Adapter implements LightGroupRecy
     @Override
     public LightGroupRecycler.GroupHolder creatGroupHolder(ViewGroup viewGroup, int type) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_adapter_title, viewGroup, false);
-        return new LightGroupRecycler.GroupHolder(view);
+        Log.i("creatGroupHolder","creatGroupHolder");
+        return new GroupHolder(view);
     }
 
 
     //
     @Override
     public void onBindGroupHolder(LightGroupRecycler.GroupHolder holder, int position) {
-
+        ((GroupHolder) holder).textView.setText("group" + position);
     }
 
+
+    class GroupHolder extends LightGroupRecycler.GroupHolder {
+        TextView textView;
+
+        public GroupHolder(View itemView) {
+            super(itemView);
+            textView = itemView.findViewById(R.id.name);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(view.getContext(), textView.getText()+"", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
     class Holder extends RecyclerView.ViewHolder {
         TextView textView;
@@ -57,6 +75,7 @@ public class GroupAdapter extends RecyclerView.Adapter implements LightGroupRecy
         public Holder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.text_item);
+
         }
     }
 }
