@@ -6,15 +6,15 @@ import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class LightGroupRecycler {
     private List<View> groupCatch = new ArrayList<>();
-    private Map<View, Integer> ViewPosition = new HashMap<>();
+    private List<View> ViewPosition = new ArrayList<>();
     private Map<Integer, Integer> groupUpperSpan = new HashMap<>();
     private WeakReference<RecyclerView> recyclerView;
     private LightChildHelper lightChildHelper;
@@ -52,7 +52,7 @@ public class LightGroupRecycler {
         try {
             Field field = RecyclerView.LayoutManager.class.getDeclaredField("mRecyclerView");
             field.setAccessible(true);
-            recyclerView = new WeakReference<RecyclerView>((RecyclerView) field.get(layoutManager));
+            recyclerView = new WeakReference<>((RecyclerView) field.get(layoutManager));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -60,14 +60,44 @@ public class LightGroupRecycler {
         }
     }
 
-    public void addView(View view) {
-        view.setLayoutParams(new LightRecyLayoutParams(new GroupHolder(view)));
-        lightChildHelper.addView(view, true);
+    //    public void addView(View view) {
+//        view.setLayoutParams(new LightRecyLayoutParams(new GroupHolder(view)));
+//        lightChildHelper.addView(view, true);
+//    }
+    public void addChildView(View view, int position) {
+        lightChildHelper.addView(view, position, true);
     }
 
     public void addView(View view, int position) {
-        ViewPosition.put(view, position);
+        ((LightRecyLayoutParams) view.getLayoutParams()).setPosition(position);
+        ViewPosition.add(view);
         lightChildHelper.addView(view, true);
+    }
+
+    public void addView(View view, int viewPosition, int position) {
+        ((LightRecyLayoutParams) view.getLayoutParams()).setPosition(position);
+        ViewPosition.add(viewPosition,view);
+        lightChildHelper.addView(view, viewPosition, true);
+    }
+
+    /***
+     * 帮试图插入lightChildHelper的队尾
+     * @param view
+     * @param viewPosition
+     * @param position
+     */
+    public void addViewInEnd(View view, int viewPosition, int position) {
+        ((LightRecyLayoutParams) view.getLayoutParams()).setPosition(position);
+        ViewPosition.add(view);
+        lightChildHelper.addView(view, viewPosition, true);
+    }
+
+    public int getChildOffset(int position) {
+        return lightChildHelper.getChildOffset(position);
+    }
+
+    public int getPositionFromGroupView(View view) {
+        return ((LightRecyLayoutParams) view.getLayoutParams()).getPosition();
     }
 
     public View getGroupViewForPosition(int position) {
@@ -102,34 +132,61 @@ public class LightGroupRecycler {
     }
 
     public void offsetChildrenVertical(int dy) {
-        Iterator iter = ViewPosition.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            View view = (View) entry.getKey();
+        for (View view : ViewPosition) {
             view.offsetTopAndBottom(dy);
         }
     }
 
     List<View> recyviews = new ArrayList<>();
 
-    public void recyclerOutScreenView() {
+    public void recyclerOutScreenView(boolean up, int totalHeight) {
         recyviews.clear();
-        recyclerBefor();
+        if (up) {
+            recyclerBefor();
+        } else {
+            RecyclerAfter(totalHeight);
+        }
         for (View view : recyviews) {
             removeAndRecycleView(view);
         }
     }
 
+    private void RecyclerAfter(int totalHeight) {
+        int count = ViewPosition.size();
+        int i = count - 1;
+        while (i >= 0) {
+            View view = ViewPosition.get(i);
+            if (view.getY() <= (totalHeight)) {//跌代一直到遇到不能回收的停止
+                return;
+            }
+            recyviews.add(view);
+            i--;
+        }
+    }
+
     private void recyclerBefor() {
-        Iterator iter = ViewPosition.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            View view = (View) entry.getKey();
+        for (View view : ViewPosition) {
             if ((view.getY() + view.getMeasuredHeight()) >= 0) {//跌代一直到遇到不能回收的停止
                 return;
             }
             recyviews.add(view);
         }
+    }
+
+//    public View getFistView() {
+//        return recyclerView.get().getChildAt(0);
+//    }
+//
+    public View getLastView() {
+        return recyclerView.get().getChildAt(recyclerView.get().getChildCount() - 1);
+    }
+
+//    public View getChildAt(int position) {
+//        return recyclerView.get().getChildAt(position);
+//    }
+
+    public boolean isGroupView(View view) {
+        return view.getLayoutParams() instanceof LightRecyLayoutParams;
     }
 
     public interface LightGroupAdapter<T extends GroupHolder> {
@@ -146,5 +203,29 @@ public class LightGroupRecycler {
             super(itemView);
         }
     }
-
+    Method attachViewToParent=null;
+    public void attachViewToParent(View child, int index, ViewGroup.LayoutParams params) {
+        try {
+            if(attachViewToParent==null){
+                attachViewToParent=  RecyclerView.class.getDeclaredMethod("attachViewToParent",View.class,int.class, ViewGroup.LayoutParams.class);
+                attachViewToParent.setAccessible(true);
+            }
+            attachViewToParent.invoke(recyclerView.get(),child,index,params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+//    Method removeView=null;
+//    public void removeView(View child) {
+//        try {
+//            if(removeView==null){
+//                removeView=  RecyclerView.class.getDeclaredMethod("removeView",View.class);
+//                removeView.setAccessible(true);
+//            }
+//            attachViewToParent.invoke(recyclerView.get(),child);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
 }

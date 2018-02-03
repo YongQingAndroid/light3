@@ -1,7 +1,6 @@
 package com.posun.lightui.recyclerview;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import java.lang.reflect.Field;
 
@@ -13,6 +12,7 @@ import java.lang.reflect.Field;
 
 public class LightRecyLayoutParams extends RecyclerView.LayoutParams {
     private Field viewHolder;
+    private int position;
 
     public LightRecyLayoutParams(int width, int height) {
         super(width, height);
@@ -27,6 +27,15 @@ public class LightRecyLayoutParams extends RecyclerView.LayoutParams {
             e.printStackTrace();
         }
 
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public LightRecyLayoutParams setPosition(int position) {
+        this.position = position;
+        return this;
     }
 
     public LightGroupRecycler.GroupHolder getGroupViewHolderInt() {

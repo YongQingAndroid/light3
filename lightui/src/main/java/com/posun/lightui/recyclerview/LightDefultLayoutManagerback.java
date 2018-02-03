@@ -14,9 +14,9 @@ import java.util.List;
  * 邮箱：zyq@posun.com
  */
 
-public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
+public class LightDefultLayoutManagerback extends RecyclerView.LayoutManager {
     private int totalHeight = 0, totalWight = 0;
-    private int spanCount = 1, beforSpan = 0, afterSpan = 0, JUMP_LOOP = -100;
+    private int spanCount = 2, beforSpan = 0, afterSpan = 0, JUMP_LOOP = -100;
     int itemCount = 0;
     private Context context;
     private LightGroupRecycler groupRecycler;
@@ -30,7 +30,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
                 RecyclerView.LayoutParams.WRAP_CONTENT);
     }
 
-    public LightDefultLayoutManager(Context context) {
+    public LightDefultLayoutManagerback(Context context) {
         this.context = context;
     }
 
@@ -41,7 +41,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         mSpanSizeLookup = spanSizeLookup;
     }
 
-    public LightDefultLayoutManager(Context context, int spanCount) {
+    public LightDefultLayoutManagerback(Context context, int spanCount) {
         this.spanCount = spanCount;
         this.context = context;
     }
@@ -90,7 +90,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     private int fillLayout(int dy, RecyclerView.Recycler recycler) {
         Log.e("fillLayout", groupRecycler.getRecyclerView().getChildCount() + "");
         if (dy > 0) {
-            View lastView = groupRecycler.getLastView();
+            View lastView =groupRecycler.getLastView();
             int addheight = (int) (lastView.getY() + lastView.getMeasuredHeight());
             addheight = addheight - totalHeight;
             int offsetY = (int) lastView.getY() + lastView.getMeasuredHeight();
@@ -107,7 +107,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
             offsetChildrenVertical(-dy);
             recyclerView(true, recycler);
         } else {
-            View fistView =getChildAt(0);
+            View fistView = getChildAt(0);
             int addheight = 0;
             int offsetY = (int) fistView.getY();
             if (offsetY < 0) {
@@ -149,7 +149,6 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     private void resitLastViewSpan(View view) {
         if(groupRecycler.isGroupView(view)){
             beforSpan=0;
-            return;
         }
         int span = getItemSpan(getPosition(view));
         int x = (int) view.getX();
@@ -164,11 +163,9 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     private void resitfistViewSpan(View view) {
         if(groupRecycler.isGroupView(view)){
             afterSpan=groupRecycler.getGroupUpperSpan(groupRecycler.getPositionFromGroupView(view),spanCount);
-            return;
-        }else{
-            int x = totalWight - ((int) view.getX());//向下滑动时视图为逆序添加
-            afterSpan = spanCount - (x / (totalWight / spanCount));
         }
+        int x = totalWight - ((int) view.getX());//向下滑动时视图为逆序添加
+        afterSpan = spanCount - (x / (totalWight / spanCount));
     }
 
     private int addAfterItemWithGroup(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
@@ -177,13 +174,14 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         int position = index.getIndex();
         if (isGroupAdapter && (position == -1 || (groupRecycler.getGroupAdapter().isGroup(position)))) {
             int height = 0;
-            height += addAfterItem(recycler, index, offsetY);//渲染子视图
+//            Log.e("ItemIndex", index.toString());
+            height += addAfterItem(recycler, index, offsetY);
             afterSpan = groupRecycler.getGroupUpperSpan(position, spanCount);
             View fistview = getChildAt(0);
             offsetY -= fistview.getMeasuredHeight();
             View view = groupRecycler.getGroupViewForPosition(position);
             measureChild(view, 0, 0);
-            groupRecycler.addView(view,0, position);
+            groupRecycler.addView(view, 0, position);
             int viewHeight = view.getMeasuredHeight();
             layoutDecoratedWithMargins(view, 0, offsetY - viewHeight, totalHeight, offsetY);
             return height + viewHeight + addAfterItem1(recycler, index, offsetY - viewHeight);
@@ -205,7 +203,8 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         if (afterSpan == spanCount) {//防止while循环不被执行
             afterSpan = 0;
         }
-        while (index.getIndex()>=0&&afterSpan != spanCount) {//渲染多一行子view因为groupView一直会在队列的顶部
+
+        while (index.getIndex()>=0&&afterSpan != spanCount) {
             height += addAfterItem(recycler, index, offsetY);
         }
         return height;
@@ -258,7 +257,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
 
     private int addBeforItem1(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
         int height = 0;
-        while (beforSpan != spanCount&&!groupRecycler.getGroupAdapter().isGroup(index.getIndex()+1)) {
+        while (beforSpan != spanCount) {
             height += addBeforItem(recycler, index, offsetY);
         }
         return height;
