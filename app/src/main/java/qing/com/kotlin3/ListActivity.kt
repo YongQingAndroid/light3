@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.posun.lightui.recyclerview.LightDefultLayoutManager
-import com.posun.lightui.recyclerview.LightDefultLayoutManagerback
 import com.posun.lightui.recyclerview.LightOnItemTouchListener
 import kotlinx.android.synthetic.main.activity_list.*
 
