@@ -18,6 +18,16 @@ public class LightGroupRecycler {
     private WeakReference<RecyclerView> recyclerView;
     private LightChildHelper lightChildHelper;
 
+    public View getGroupViewAt(int index) {
+        if (index < screenGroupViews.size())
+            return screenGroupViews.get(index);
+        return null;
+    }
+
+    public int getGroupViewCount() {
+        return screenGroupViews.size();
+    }
+
     /**
      * 回收屏幕外面的视图
      *
