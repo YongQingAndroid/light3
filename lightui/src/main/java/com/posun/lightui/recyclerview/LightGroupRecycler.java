@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,40 +13,75 @@ import java.util.Map;
 
 public class LightGroupRecycler {
     private List<View> groupCatch = new ArrayList<>();
-    private List<View> ViewPosition = new ArrayList<>();
+    private List<View> screenGroupViews = new ArrayList<>();
     private Map<Integer, Integer> groupUpperSpan = new HashMap<>();
     private WeakReference<RecyclerView> recyclerView;
     private LightChildHelper lightChildHelper;
 
-    public void removeAndRecycleView(View view) {
-        lightChildHelper.removeView(view);
-        ViewPosition.remove(view);
-        if (groupCatch.size() < 10) {
-            groupCatch.add(view);
+    /**
+     * 回收屏幕外面的视图
+     *
+     * @param layoutManager
+     * @param recycler
+     */
+    public void removeAndRecycleView(RecyclerView.LayoutManager layoutManager, RecyclerView.Recycler recycler) {
+        for (View view : recyviews) {
+            if (isGroupView(view)) {
+                lightChildHelper.removeView(view);
+                screenGroupViews.remove(view);
+                if (groupCatch.size() < 10) {
+                    groupCatch.add(view);
+                }
+            } else {
+                layoutManager.removeAndRecycleView(view, recycler);
+            }
         }
     }
 
+    /**
+     * 方便倒序添加视图
+     *
+     * @param position
+     * @param span
+     */
     public void addGroupUpperSpan(int position, int span) {
         groupUpperSpan.put(position, span);
     }
 
+    /***
+     * 倒序添加视图
+     * @param position
+     * @param totalSpan
+     * @return
+     */
     public int getGroupUpperSpan(int position, int totalSpan) {
         if (groupUpperSpan.containsKey(position))
             return totalSpan - groupUpperSpan.get(position);
         return 0;
     }
 
+    /**
+     * @return
+     */
     public RecyclerView getRecyclerView() {
         if (recyclerView != null && recyclerView.get() != null)
             return recyclerView.get();
         return null;
     }
 
+    /***
+     * 構造方法
+     * @param layoutManager
+     */
     public LightGroupRecycler(RecyclerView.LayoutManager layoutManager) {
         initRecyclerView(layoutManager);
         lightChildHelper = new LightChildHelper(layoutManager);
     }
 
+    /***
+     * 初始化
+     * @param layoutManager
+     */
     private void initRecyclerView(RecyclerView.LayoutManager layoutManager) {
         try {
             Field field = RecyclerView.LayoutManager.class.getDeclaredField("mRecyclerView");
@@ -60,23 +94,31 @@ public class LightGroupRecycler {
         }
     }
 
-    //    public void addView(View view) {
-//        view.setLayoutParams(new LightRecyLayoutParams(new GroupHolder(view)));
-//        lightChildHelper.addView(view, true);
-//    }
+    /***
+     * 添加视图
+     * @param view 子视图
+     * @param viewPosition 子视图要插入的位置
+     * @param layoutManager recyclerView 的LayoutManager
+     * @param isGroup 是否为组
+     */
+    public void addViewToRecycleView(View view, int viewPosition, RecyclerView.LayoutManager layoutManager, boolean isGroup) {
+        if (isGroup) {
+            addView(view, viewPosition);
+            screenGroupViews.add(viewPosition == -1 ? screenGroupViews.size() : viewPosition, view);
+        } else {
+            layoutManager.addView(view, viewPosition);
+        }
+    }
+
+    public void addViewToRecycleView(View view, RecyclerView.LayoutManager layoutManager, boolean isGroup) {
+        addViewToRecycleView(view, -1, layoutManager, isGroup);
+    }
+
     public void addChildView(View view, int position) {
         lightChildHelper.addView(view, position, true);
     }
 
-    public void addView(View view, int position) {
-        ((LightRecyLayoutParams) view.getLayoutParams()).setPosition(position);
-        ViewPosition.add(view);
-        lightChildHelper.addView(view, true);
-    }
-
-    public void addView(View view, int viewPosition, int position) {
-        ((LightRecyLayoutParams) view.getLayoutParams()).setPosition(position);
-        ViewPosition.add(viewPosition,view);
+    private void addView(View view, int viewPosition) {
         lightChildHelper.addView(view, viewPosition, true);
     }
 
@@ -88,13 +130,9 @@ public class LightGroupRecycler {
      */
     public void addViewInEnd(View view, int viewPosition, int position) {
         ((LightRecyLayoutParams) view.getLayoutParams()).setPosition(position);
-        ViewPosition.add(view);
         lightChildHelper.addView(view, viewPosition, true);
     }
 
-    public int getChildOffset(int position) {
-        return lightChildHelper.getChildOffset(position);
-    }
 
     public int getPositionFromGroupView(View view) {
         return ((LightRecyLayoutParams) view.getLayoutParams()).getPosition();
@@ -109,6 +147,7 @@ public class LightGroupRecycler {
             viewHolder = getGroupAdapter().creatGroupHolder(recyclerView.get(), 0);
             viewHolder.itemView.setLayoutParams(new LightRecyLayoutParams(viewHolder));
         }
+        ((LightRecyLayoutParams) viewHolder.itemView.getLayoutParams()).setPosition(position);
         getGroupAdapter().onBindGroupHolder(viewHolder, position);
         return viewHolder.itemView;
     }
@@ -131,59 +170,64 @@ public class LightGroupRecycler {
         return null;
     }
 
-    public void offsetChildrenVertical(int dy) {
-        for (View view : ViewPosition) {
-            view.offsetTopAndBottom(dy);
-        }
-    }
 
     List<View> recyviews = new ArrayList<>();
 
-    public void recyclerOutScreenView(boolean up, int totalHeight) {
+    public void recyclerOutScreenView(boolean up, int totalHeight, RecyclerView.LayoutManager layoutManager) {
         recyviews.clear();
-        if (up) {
-            recyclerBefor();
-        } else {
-            RecyclerAfter(totalHeight);
-        }
-        for (View view : recyviews) {
-            removeAndRecycleView(view);
-        }
+        recyclerAllOutScreenView(totalHeight, up, layoutManager);
+        recyclerAllOutScreenGroupView(totalHeight, up);
     }
 
-    private void RecyclerAfter(int totalHeight) {
-        int count = ViewPosition.size();
-        int i = count - 1;
-        while (i >= 0) {
-            View view = ViewPosition.get(i);
-            if (view.getY() <= (totalHeight)) {//跌代一直到遇到不能回收的停止
-                return;
+    private void recyclerAllOutScreenView(int totalHeight, boolean up, RecyclerView.LayoutManager layoutManager) {
+        int count = layoutManager.getChildCount();
+        int i = 0;
+        while (i < count) {
+            View view = null;
+            if (up) {
+                view = layoutManager.getChildAt(i);
+            } else {
+                view = layoutManager.getChildAt((count - 1) - i);
             }
-            recyviews.add(view);
-            i--;
-        }
-    }
-
-    private void recyclerBefor() {
-        for (View view : ViewPosition) {
-            if ((view.getY() + view.getMeasuredHeight()) >= 0) {//跌代一直到遇到不能回收的停止
-                return;
+            int y = (int) view.getY();
+            i++;
+            int height = view.getMeasuredHeight();
+            if (!up && y <= totalHeight) {//跳过或终止循环
+                break;
+            } else if (up && (y + height) >= 0) {
+                break;
             }
             recyviews.add(view);
         }
+
     }
 
-//    public View getFistView() {
-//        return recyclerView.get().getChildAt(0);
-//    }
-//
-    public View getLastView() {
-        return recyclerView.get().getChildAt(recyclerView.get().getChildCount() - 1);
+    private void recyclerAllOutScreenGroupView(int totalHeight, boolean up) {
+        int count = screenGroupViews.size();
+        int i = 0;
+        while (i < count) {
+            View view = null;
+            if (up) {
+                view = screenGroupViews.get(i);
+            } else {
+                view = screenGroupViews.get((count - 1) - i);
+            }
+            int y = (int) view.getY();
+            i++;
+            int height = view.getMeasuredHeight();
+            if (!up && y <= totalHeight) {//跳过或终止循环
+                break;
+            } else if (up && (y + height) >= 0) {
+                break;
+            }
+            recyviews.add(view);
+        }
+
     }
 
-//    public View getChildAt(int position) {
-//        return recyclerView.get().getChildAt(position);
-//    }
+    public View getChildAt(int position) {
+        return recyclerView.get().getChildAt(position);
+    }
 
     public boolean isGroupView(View view) {
         return view.getLayoutParams() instanceof LightRecyLayoutParams;
@@ -203,29 +247,5 @@ public class LightGroupRecycler {
             super(itemView);
         }
     }
-    Method attachViewToParent=null;
-    public void attachViewToParent(View child, int index, ViewGroup.LayoutParams params) {
-        try {
-            if(attachViewToParent==null){
-                attachViewToParent=  RecyclerView.class.getDeclaredMethod("attachViewToParent",View.class,int.class, ViewGroup.LayoutParams.class);
-                attachViewToParent.setAccessible(true);
-            }
-            attachViewToParent.invoke(recyclerView.get(),child,index,params);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-//    Method removeView=null;
-//    public void removeView(View child) {
-//        try {
-//            if(removeView==null){
-//                removeView=  RecyclerView.class.getDeclaredMethod("removeView",View.class);
-//                removeView.setAccessible(true);
-//            }
-//            attachViewToParent.invoke(recyclerView.get(),child);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
+
 }
