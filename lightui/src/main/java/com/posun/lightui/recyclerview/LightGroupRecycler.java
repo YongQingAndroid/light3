@@ -15,7 +15,6 @@ public class LightGroupRecycler {
     private List<View> groupCatch = new ArrayList<>();
     private List<View> screenGroupViews = new ArrayList<>();
     private Map<Integer, Integer> groupUpperSpan = new HashMap<>();
-    //    SparseIntArray
     private WeakReference<RecyclerView> recyclerView;
     private LightChildHelper lightChildHelper;
 
@@ -29,13 +28,16 @@ public class LightGroupRecycler {
         return null;
     }
 
+    public void removegroupUpperSpan() {
+        groupUpperSpan.clear();
+    }
+
     public void removeAllViews() {
         for (View view : screenGroupViews) {
             lightChildHelper.removeView(view);
         }
         groupCatch.addAll(screenGroupViews);
         screenGroupViews.clear();
-        groupUpperSpan.clear();
     }
 
     public int getGroupViewCount() {

@@ -13,7 +13,7 @@ import android.view.View;
 
 public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     private int totalHeight = 0, totalWight = 0;
-    private int beforSpan = 0, afterSpan = 0, JUMP_LOOP = -100;
+    private int beforSpan = 0, afterSpan = 0;
     protected int spanCount = 2;
     private LightScrollBarHelper mLightScrollBarHelper;
     int itemCount = 0;
@@ -55,7 +55,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     private void onLayoutLastViewSpanAndOffsetY(View view) {
         if (groupRecycler.isGroupView(view)) {
             beforSpan = 0;
-        }else{
+        } else {
             int span = getItemSpan(getPosition(view));
             int x = (int) view.getX();
             beforSpan = (x / (totalWight / spanCount));
@@ -91,8 +91,12 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         if (layoutState == null) {
             layoutState = new LightLayoutState(recycler);
         }
+        if (position != 0) {
+            position -= 1;
+        }
         layoutState.setPosition(position);
         layoutState.setOffsetY(offsetY);
+        layoutState.totalHeight.setValue(0);
         while (layoutState.offsetY.getIndex() < totalHeight && layoutState.haveNext()) {
             addBeforItemWithGroup(recycler, layoutState);
         }
@@ -102,6 +106,9 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
             mLightScrollBarHelper = new LightScrollBarHelper();
         }
         mLightScrollBarHelper.setInitScrollPosition(initScrollPosition);
+        if (view != null) {
+            groupRecycler.removegroupUpperSpan();
+        }
     }
 
     @Override
