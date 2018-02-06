@@ -18,6 +18,17 @@ import com.posun.lightui.recyclerview.LightGroupRecycler;
  */
 
 public class GroupAdapter extends RecyclerView.Adapter implements LightGroupRecycler.LightGroupAdapter {
+    boolean test = false;
+    String tag = "--->Item";
+
+    public void setTest() {
+        if (tag.equals("")) {
+            tag = "--->Item";
+        } else {
+            tag = "";
+        }
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
@@ -26,7 +37,7 @@ public class GroupAdapter extends RecyclerView.Adapter implements LightGroupRecy
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((Holder) holder).textView.setText(position + "");
+        ((Holder) holder).textView.setText(position + tag);
     }
 
     @Override
@@ -42,7 +53,7 @@ public class GroupAdapter extends RecyclerView.Adapter implements LightGroupRecy
     @Override
     public LightGroupRecycler.GroupHolder creatGroupHolder(ViewGroup viewGroup, int type) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_adapter_title, viewGroup, false);
-        Log.i("creatGroupHolder","creatGroupHolder");
+        Log.i("creatGroupHolder", "creatGroupHolder");
         return new GroupHolder(view);
     }
 
@@ -50,7 +61,7 @@ public class GroupAdapter extends RecyclerView.Adapter implements LightGroupRecy
     //
     @Override
     public void onBindGroupHolder(LightGroupRecycler.GroupHolder holder, int position) {
-        ((GroupHolder) holder).textView.setText("group" + position);
+        ((GroupHolder) holder).textView.setText("group" + position + tag);
     }
 
 
@@ -63,7 +74,7 @@ public class GroupAdapter extends RecyclerView.Adapter implements LightGroupRecy
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(), textView.getText()+"", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(view.getContext(), textView.getText() + "", Toast.LENGTH_SHORT).show();
                 }
             });
         }

@@ -1,5 +1,6 @@
 package qing.com.kotlin3;
 
+import com.posun.lightui.recyclerview.LightDefultLayoutManager;
 import com.posun.lightui.timePicker.calender.LightCalenderView;
 
 /**
@@ -26,6 +27,13 @@ public class Demo {
 //        textView.setLayoutParams(layoutParams);
 //        reFectaddView(this, textView, true);
 //        layoutDecoratedWithMargins(textView, 50, 50, 150, 150);
+        LightDefultLayoutManager defultLayoutManager=null;
+        defultLayoutManager.setSpanSizeLookup(new LightDefultLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return position%5==3?2:1;
+            }
+        });
     }
 
 }

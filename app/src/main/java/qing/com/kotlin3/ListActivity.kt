@@ -21,18 +21,27 @@ class ListActivity : AppCompatActivity() {
     fun initUi() {
 //        adapter = TestAdapter()
 //        list.adapter = adapter
-        adapter =   GroupAdapter()
+        adapter = GroupAdapter()
         recyclerview.adapter = adapter
-        recyclerview.layoutManager = LightDefultLayoutManager(this)
+        var defultLayoutManager = LightDefultLayoutManager(this);
+        recyclerview.layoutManager = defultLayoutManager
         recyclerview.addOnItemTouchListener(
                 LightOnItemTouchListener(recyclerview, object : LightOnItemTouchListener.OnItemTouchListener<GroupAdapter.Holder> {
                     override fun onItemClick(vh: GroupAdapter.Holder) {
                         Toast.makeText(vh.itemView.context, vh.adapterPosition.toString(), Toast.LENGTH_SHORT).show()
                     }
+
                     override fun onLongItemClick(vh: GroupAdapter.Holder) {
 
                     }
                 }
                 ))
+//        defultLayoutManager.setSpanSizeLookup { position ->
+//            if (position % 5 == 2) 2 else 1
+//        }
+        btn.setOnClickListener {
+            adapter!!.setTest()
+            adapter!!.notifyDataSetChanged()
+        }
     }
 }
