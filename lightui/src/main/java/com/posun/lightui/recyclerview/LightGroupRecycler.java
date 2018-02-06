@@ -15,13 +15,27 @@ public class LightGroupRecycler {
     private List<View> groupCatch = new ArrayList<>();
     private List<View> screenGroupViews = new ArrayList<>();
     private Map<Integer, Integer> groupUpperSpan = new HashMap<>();
+    //    SparseIntArray
     private WeakReference<RecyclerView> recyclerView;
     private LightChildHelper lightChildHelper;
 
+    /**
+     * @param index
+     * @return
+     */
     public View getGroupViewAt(int index) {
         if (index < screenGroupViews.size())
             return screenGroupViews.get(index);
         return null;
+    }
+
+    public void removeAllViews() {
+        for (View view : screenGroupViews) {
+            lightChildHelper.removeView(view);
+        }
+        groupCatch.addAll(screenGroupViews);
+        screenGroupViews.clear();
+        groupUpperSpan.clear();
     }
 
     public int getGroupViewCount() {
@@ -55,19 +69,40 @@ public class LightGroupRecycler {
      * @param span
      */
     public void addGroupUpperSpan(int position, int span) {
-        groupUpperSpan.put(position, span);
+        if (!groupUpperSpan.containsKey(position))
+            groupUpperSpan.put(position, span);
     }
 
     /***
      * 倒序添加视图
      * @param position
-     * @param totalSpan
      * @return
      */
-    public int getGroupUpperSpan(int position, int totalSpan) {
+    public int getGroupUpperSpan(int position, LightDefultLayoutManager manager) {
         if (groupUpperSpan.containsKey(position))
-            return totalSpan - groupUpperSpan.get(position);
-        return 0;
+            return manager.spanCount - groupUpperSpan.get(position);
+        return tryGetGroupUpperSpan(position, manager);
+    }
+
+    /***
+     *
+     * @param position
+     * @param manager
+     * @return
+     */
+    private int tryGetGroupUpperSpan(int position, LightDefultLayoutManager manager) {
+        LightGroupAdapter adapter = getGroupAdapter();
+        int i = position - 1, span = 0;
+        while (i >= 0) {
+            span += manager.getItemSpan(i);
+            if (adapter.isGroup(i)) {
+                break;
+            }
+            i--;
+        }
+        int newspan = manager.spanCount - (span % manager.spanCount);
+        groupUpperSpan.put(position, newspan);
+        return newspan;
     }
 
     /**
@@ -143,11 +178,19 @@ public class LightGroupRecycler {
         lightChildHelper.addView(view, viewPosition, true);
     }
 
-
+    /***
+     *
+     * @param view
+     * @return
+     */
     public int getPositionFromGroupView(View view) {
         return ((LightRecyLayoutParams) view.getLayoutParams()).getPosition();
     }
 
+    /**
+     * @param position
+     * @return
+     */
     public View getGroupViewForPosition(int position) {
         GroupHolder viewHolder = null;
         if (groupCatch.size() > 0) {
@@ -162,12 +205,19 @@ public class LightGroupRecycler {
         return viewHolder.itemView;
     }
 
+    /**
+     * @param view
+     * @return
+     */
     public GroupHolder getGroupHolder(View view) {
         return ((LightRecyLayoutParams) view.getLayoutParams()).getGroupViewHolderInt();
     }
 
     private WeakReference<LightGroupAdapter> groupAdapter;
 
+    /**
+     * @return
+     */
     public LightGroupAdapter getGroupAdapter() {
         if (groupAdapter != null && groupAdapter.get() != null)
             return groupAdapter.get();
@@ -183,12 +233,24 @@ public class LightGroupRecycler {
 
     List<View> recyviews = new ArrayList<>();
 
+    /***
+     *
+     * @param up
+     * @param totalHeight
+     * @param layoutManager
+     */
     public void recyclerOutScreenView(boolean up, int totalHeight, RecyclerView.LayoutManager layoutManager) {
         recyviews.clear();
         recyclerAllOutScreenView(totalHeight, up, layoutManager);
         recyclerAllOutScreenGroupView(totalHeight, up);
     }
 
+    /***
+     *
+     * @param totalHeight
+     * @param up
+     * @param layoutManager
+     */
     private void recyclerAllOutScreenView(int totalHeight, boolean up, RecyclerView.LayoutManager layoutManager) {
         int count = layoutManager.getChildCount();
         int i = 0;
@@ -212,6 +274,10 @@ public class LightGroupRecycler {
 
     }
 
+    /**
+     * @param totalHeight
+     * @param up
+     */
     private void recyclerAllOutScreenGroupView(int totalHeight, boolean up) {
         int count = screenGroupViews.size();
         int i = 0;
@@ -235,14 +301,26 @@ public class LightGroupRecycler {
 
     }
 
+    /**
+     * @param position
+     * @return
+     */
     public View getChildAt(int position) {
         return recyclerView.get().getChildAt(position);
     }
 
+    /***
+     *
+     * @param view
+     * @return
+     */
     public boolean isGroupView(View view) {
         return view.getLayoutParams() instanceof LightRecyLayoutParams;
     }
 
+    /***
+     * @param <T>
+     */
     public interface LightGroupAdapter<T extends GroupHolder> {
         boolean isGroup(int position);
 
@@ -252,10 +330,12 @@ public class LightGroupRecycler {
 
     }
 
+    /***
+     *
+     */
     public static class GroupHolder extends RecyclerView.ViewHolder {
         public GroupHolder(View itemView) {
             super(itemView);
         }
     }
-
 }

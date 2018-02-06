@@ -11,7 +11,7 @@ import android.view.View;
  * 邮箱：zyq@posun.com
  */
 
-public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
+public class LightDefultLayoutManagerback extends RecyclerView.LayoutManager {
     private int totalHeight = 0, totalWight = 0;
     private int beforSpan = 0, afterSpan = 0, JUMP_LOOP = -100;
     protected int spanCount = 2;
@@ -20,7 +20,6 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     private Context context;
     private LightGroupRecycler groupRecycler;
     private boolean isGroupAdapter = true;
-    private LightLayoutState layoutState;
 
     @Override
     public RecyclerView.LayoutParams generateDefaultLayoutParams() {
@@ -29,7 +28,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
                 RecyclerView.LayoutParams.WRAP_CONTENT);
     }
 
-    public LightDefultLayoutManager(Context context) {
+    public LightDefultLayoutManagerback(Context context) {
         this.context = context;
     }
 
@@ -39,7 +38,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         mSpanSizeLookup = spanSizeLookup;
     }
 
-    public LightDefultLayoutManager(Context context, int spanCount) {
+    public LightDefultLayoutManagerback(Context context, int spanCount) {
         this.spanCount = spanCount;
         this.context = context;
     }
@@ -55,13 +54,12 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     private void onLayoutLastViewSpanAndOffsetY(View view) {
         if (groupRecycler.isGroupView(view)) {
             beforSpan = 0;
-        }else{
-            int span = getItemSpan(getPosition(view));
-            int x = (int) view.getX();
-            beforSpan = (x / (totalWight / spanCount));
-            if (beforSpan != 0)
-                beforSpan -= span;
         }
+        int span = getItemSpan(getPosition(view));
+        int x = (int) view.getX();
+        beforSpan = (x / (totalWight / spanCount));
+        if (beforSpan != 0)
+            beforSpan -= span;
     }
 
     @Override
@@ -88,15 +86,11 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         detachAndScrapAttachedViews(recycler);
         if (groupRecycler == null)
             groupRecycler = new LightGroupRecycler(this);
-        if (layoutState == null) {
-            layoutState = new LightLayoutState(recycler);
-        }
-        layoutState.setPosition(position);
-        layoutState.setOffsetY(offsetY);
-        while (layoutState.offsetY.getIndex() < totalHeight && layoutState.haveNext()) {
-            addBeforItemWithGroup(recycler, layoutState);
-        }
-        double initScrollPosition = (layoutState.position.getIndex() - position) / (double) itemCount;
+        ItemIndex index = new ItemIndex(position);
+//        while (offsetY.getIndex() < totalHeight && haveNext(index.getIndex())) {
+//            offsetY.add(addBeforItemWithGroup(recycler, index, offsetY.getIndex()));
+//        }
+        double initScrollPosition = (index.getIndex() - position) / (double) itemCount;
         initScrollPosition = initScrollPosition * 100;
         if (mLightScrollBarHelper == null) {
             mLightScrollBarHelper = new LightScrollBarHelper();
@@ -131,14 +125,14 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
             addheight = addheight - totalHeight;
             int offsetY = (int) lastView.getY() + lastView.getMeasuredHeight();
             offsetY += resitLastViewSpanAndOffsetY(lastView);
-            layoutState.setOffsetY(offsetY);
-            layoutState.totalHeight.setValue(addheight);
-            layoutState.setPosition(getPosition(lastView));
-            while (layoutState.haveNext() && layoutState.totalHeight.getIndex() <= dy) {
-                addBeforItemWithGroup(recycler, layoutState);
+            ItemIndex index = new ItemIndex(getPosition(lastView) + 1);
+            while (haveNext(index.getIndex()) && addheight <= dy) {
+                int height = addBeforItemWithGroup(recycler, index, offsetY);
+                offsetY += height;
+                addheight += height;
             }
-            if (dy > layoutState.totalHeight.getIndex()) {
-                dy = layoutState.totalHeight.getIndex();
+            if (dy > addheight) {
+                dy = addheight;
             }
             offsetChildrenVertical(-dy);
             recyclerView(true, recycler);
@@ -149,19 +143,22 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
             if (offsetY < 0) {
                 addheight = (int) Math.abs(fistView.getY());
             }
-            int index = getPosition(fistView);
+            ItemIndex index = new ItemIndex(getPosition(fistView) - 1);
             resitfistViewSpan(fistView);
-            int juageheight = juageHasGroupView(fistView, offsetY, index);
+            int juageheight = juageHasGroupView(fistView, offsetY, index.getIndex() + 1);
             addheight += juageheight;
             offsetY -= juageheight;
-            layoutState.setPosition(index);
-            layoutState.setOffsetY(offsetY);
-            layoutState.totalHeight.setValue(addheight);
-            while (layoutState.havePreviousView() && layoutState.totalHeight.getIndex() <= Math.abs(dy)) {
-                addAfterItemWithGroup(recycler, layoutState);
+            while (index.getIndex() >= 0 && addheight <= Math.abs(dy)) {
+                int height = addAfterItemWithGroup(recycler, index, offsetY);
+                if (height == JUMP_LOOP) {
+                    break;
+                } else {
+                    offsetY -= height;
+                    addheight += height;
+                }
             }
-            if (Math.abs(dy) > layoutState.totalHeight.getIndex()) {
-                dy = -layoutState.totalHeight.getIndex();
+            if (Math.abs(dy) > addheight) {
+                dy = -addheight;
             }
             offsetChildrenVertical(-dy);
             recyclerView(false, recycler);
@@ -169,13 +166,6 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         return dy;
     }
 
-    /***
-     *
-     * @param fistview
-     * @param offsetY
-     * @param position
-     * @return
-     */
     private int juageHasGroupView(View fistview, int offsetY, int position) {
         int addheight = 0;
         if (isGroupAdapter && groupRecycler.getGroupAdapter().isGroup(position)) {
@@ -187,7 +177,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
                 layoutDecoratedWithMargins(view, 0, offsetY - viewHeight, totalHeight, offsetY);
                 addheight += viewHeight;
             }
-            afterSpan = groupRecycler.getGroupUpperSpan(position, this);
+//            afterSpan = groupRecycler.getGroupUpperSpan(position, this);
         }
         return addheight;
     }
@@ -250,25 +240,42 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         afterSpan = spanCount - (x / (totalWight / spanCount));
     }
 
-    private void addAfterItemWithGroup(RecyclerView.Recycler recycler, LightLayoutState state) {
-        View view = state.getPreviousView();
-        if (view == null)
-            return;
-        if (groupRecycler.isGroupView(view)) {
+    private int addAfterItemWithGroup(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
+        if (index.getIndex() < 0)
+            return JUMP_LOOP;
+        int position = index.getIndex();
+        if (isGroupAdapter && (position == -1 || (groupRecycler.getGroupAdapter().isGroup(position)))) {
+            int height = 0;
+            height += addAfterItem(recycler, index, offsetY);//渲染子视图
+//            afterSpan = groupRecycler.getGroupUpperSpan(position, this);
+            View fistview = getChildAt(0);
+            offsetY -= fistview.getMeasuredHeight();
+            View view = groupRecycler.getGroupViewForPosition(position);
+            measureChild(view, 0, 0);
             groupRecycler.addViewToRecycleView(view, 0, this, true);
             int viewHeight = view.getMeasuredHeight();
-            layoutDecoratedWithMargins(view, 0, state.offsetY.getIndex() - viewHeight, totalHeight, state.offsetY.getIndex());
-            state.totalHeight.add(viewHeight);
-            state.offsetY.reduce(viewHeight);
-            afterSpan = groupRecycler.getGroupUpperSpan(state.position.getIndex(), this);
-        } else {
-            addAfterItem(view, state);
+            layoutDecoratedWithMargins(view, 0, offsetY - viewHeight, totalHeight, offsetY);
+            return height + viewHeight + addAfterItem1(recycler, index, offsetY - viewHeight);
         }
+        return addAfterItem(recycler, index, offsetY);
     }
 
-    private void addAfterItem(View view, LightLayoutState state) {
+
+    private int addAfterItem1(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
+        int height = 0;
+        if (afterSpan == spanCount) {//防止while循环不被执行
+            afterSpan = 0;
+        }
+        while (index.getIndex() >= 0 && afterSpan != spanCount) {//渲染多一行子view因为groupView一直会在队列的顶部
+            height += addAfterItem(recycler, index, offsetY);
+        }
+        return height;
+    }
+
+    private int addAfterItem(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
+        View view = recycler.getViewForPosition(index.getIndex());
         groupRecycler.addViewToRecycleView(view, 0, this, false);
-        int span = getItemSpan(state.position.getIndex());
+        int span = getItemSpan(index.getIndex());
         if (afterSpan >= spanCount) {
             afterSpan = 0;
         }
@@ -279,41 +286,50 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         int height = getDecoratedMeasuredHeight(view);
         int right = totalWight - (afterSpan * item);
         int left = right - width;
-        layoutDecoratedWithMargins(view, left, state.offsetY.getIndex() - height, right, state.offsetY.getIndex());
+        layoutDecoratedWithMargins(view, left, offsetY - height, right, offsetY);
+        index.previous();
         if ((afterSpan + span) < spanCount) {
             afterSpan += span;
+            return 0;
         } else {
             afterSpan += span;
-            if (!state.position.isLockshowGroup()) {
-                state.totalHeight.add(height);
-                state.offsetY.reduce(height);
-            }
+            return height;
         }
     }
 
-    private void addBeforItemWithGroup(RecyclerView.Recycler recycler, LightLayoutState state) {
-        View view = state.getNextView();
-        if (groupRecycler.isGroupView(view)) {
+    private int addBeforItemWithGroup(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
+        int position = index.getIndex();
+        if (isGroupAdapter && groupRecycler.getGroupAdapter().isGroup(position)) {
+            int otherLine = 0;
+            if (beforSpan % spanCount != 0 && spanCount != 1) {
+                View view = getChildAt(getChildCount() - 1);
+                otherLine = view.getMeasuredHeight();
+                groupRecycler.addGroupUpperSpan(position, beforSpan);
+            }
+            View view = groupRecycler.getGroupViewForPosition(position);
             measureChild(view, 0, 0);
             groupRecycler.addViewToRecycleView(view, this, true);
             int height = view.getMeasuredHeight();
-            layoutDecoratedWithMargins(view, 0, state.offsetY.getIndex(), totalHeight, state.offsetY.getIndex() + height);
+            layoutDecoratedWithMargins(view, 0, offsetY + otherLine, totalHeight, offsetY + height + otherLine);
             beforSpan = 0;
-            state.offsetY.add(height);
-            addBeforItem1(recycler, state);
-        } else {
-            addBeforItem(view, state);
+            return height + otherLine + addBeforItem1(recycler, index, offsetY + height + otherLine);
         }
+        return addBeforItem(recycler, index, offsetY);
     }
 
-    private void addBeforItem1(RecyclerView.Recycler recycler, LightLayoutState state) {
-        while (state.haveNext() && beforSpan != spanCount && !groupRecycler.getGroupAdapter().isGroup(state.position.getIndex() + 1)) {
-            addBeforItem(state.getNextView(), state);
+    private int addBeforItem1(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
+        int height = 0;
+        while (beforSpan != spanCount && !groupRecycler.getGroupAdapter().isGroup(index.getIndex() + 1)) {
+            int itemHeight = addBeforItem(recycler, index, offsetY);
+            offsetY += itemHeight;
+            height += itemHeight;
         }
+        return height;
     }
 
-    private void addBeforItem(View view, LightLayoutState state) {
-        int span = getItemSpan(state.position.getIndex());
+    private int addBeforItem(RecyclerView.Recycler recycler, ItemIndex index, int offsetY) {
+        View view = recycler.getViewForPosition(index.getIndex());
+        int span = getItemSpan(index.getIndex());
         if (beforSpan >= spanCount) {
             beforSpan = 0;
         }
@@ -324,20 +340,35 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         int height = getDecoratedMeasuredHeight(view);
         int left = beforSpan * item;
         groupRecycler.addViewToRecycleView(view, this, false);
-        int right = width + left;
-        layoutDecoratedWithMargins(view, left, state.offsetY.getIndex(), right, state.offsetY.getIndex() + height);
-
-        if ((beforSpan + span) < spanCount) {
+        index.next();
+        if (beforSpan != 0 && span + beforSpan > spanCount) { /**需要优化比较耗费性能(当屏幕剩余空间装不下是调用)**/
+            left = 0;
+            beforSpan = 0;
+            int childHeight = getChildAt(getChildCount() - 1).getHeight();
+            offsetY += childHeight;
             beforSpan += span;
-            if (!state.haveNext()) {//已经滑动到了底部
-                state.offsetY.add(height);
-                state.totalHeight.add(height);
+            int right = width + left;
+            layoutDecoratedWithMargins(view, left, offsetY, right, offsetY + height);
+            if (beforSpan >= spanCount) {//判断当前换行的item是否屏幕是否还有剩余空间
+                height = childHeight + height;
+            } else {
+                height = childHeight;
             }
         } else {
-            beforSpan += span;
-            state.offsetY.add(height);
-            state.totalHeight.add(height);
+            int right = width + left;
+            layoutDecoratedWithMargins(view, left, offsetY, right, offsetY + height);
         }
+        if ((beforSpan + span) < spanCount) {
+            beforSpan += span;
+            return 0;
+        } else {
+            beforSpan += span;
+            return height;
+        }
+    }
+
+    private boolean haveNext(int position) {
+        return position < itemCount;
     }
 
     /**
@@ -363,6 +394,15 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
             view.offsetTopAndBottom(dy);
         }
     }
+
+
+//    private int getHorizontalSpace() {
+//        return getWidth() - getPaddingLeft() - getPaddingRight();
+//    }
+//
+//    private int getVerticalSpace() {
+//        return getHeight() - getPaddingTop() - getPaddingBottom();
+//    }
 
     @Override
     public int computeVerticalScrollRange(RecyclerView.State state) {
@@ -428,7 +468,7 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private class LightLayoutState {
-        ItemIndex position = new ItemIndex(-1);
+        ItemIndex position = new ItemIndex(0);
         ItemIndex offsetY = new ItemIndex(0);
         ItemIndex totalHeight = new ItemIndex(0);
         private RecyclerView.Recycler recycler;
@@ -438,92 +478,26 @@ public class LightDefultLayoutManager extends RecyclerView.LayoutManager {
         }
 
         public void setPosition(int position) {
-            if (position == 0) {
-                position = -1;
-            }
             this.position.setValue(position);
-            this.position.setLockshowGroup(false);
         }
 
         public void setOffsetY(int offsetY) {
             this.offsetY.setValue(offsetY);
         }
 
-        /***
-         * @return
-         */
         public View getNextView() {
             View view = null;
             if (!position.isLockshowGroup())
                 position.next();
-            if (isGroupAdapter && groupRecycler.getGroupAdapter().isGroup(position.getIndex()) && !position.isLockshowGroup()) {
+            if (isGroupAdapter && groupRecycler.getGroupAdapter().isGroup(position.getIndex())) {
                 view = groupRecycler.getGroupViewForPosition(position.getIndex());
                 position.setLockshowGroup(true);
-                groupRecycler.addGroupUpperSpan(position.getIndex(), beforSpan);
-                if (beforSpan % spanCount != 0 && spanCount != 1) {
-                    View topview = getChildAt(getChildCount() - 1);
-                    int otherLine = topview.getMeasuredHeight();
-                    totalHeight.add(otherLine);
-                    offsetY.add(otherLine);
-                }
             } else {
-                view = recycler.getViewForPosition(position.getIndex());
+                recycler.getViewForPosition(position.getIndex());
                 position.setLockshowGroup(false);
             }
             return view;
-        }
-
-        /***
-         * @return
-         */
-        public View getPreviousView() {
-            View view = null;
-            if (!position.isLockshowGroup())
-                position.previous();
-            if (!position.isLockshowGroup()) {
-                view = recycler.getViewForPosition(position.getIndex());
-                if (isGroupAdapter && groupRecycler.getGroupAdapter().isGroup(position.getIndex())) {
-                    position.setLockshowGroup(true);
-                }
-            } else if (isGroupAdapter && position.isLockshowGroup()) {
-                View viewItem = getChildAt(0);
-                offsetY.reduce(viewItem.getHeight());
-                totalHeight.add(viewItem.getHeight());
-                position.setLockshowGroup(false);
-                view = groupRecycler.getGroupViewForPosition(position.getIndex());
-                measureChild(view, 0, 0);
-            }
-            return view;
-        }
-
-        private boolean havePreviousView() {
-            if (position.isLockshowGroup())
-                return true;
-            return position.getIndex() > 0;
-        }
-
-        private boolean haveNext() {
-            if (position.isLockshowGroup())
-                return true;
-            return position.getIndex() + 1 < itemCount;
         }
     }
-    /**废弃代码位置addBeforItem*/
-//        if (beforSpan != 0 && span + beforSpan > spanCount) { /**需要优化比较耗费性能(当屏幕剩余空间装不下是调用)**/ 错错错后添加View
-//            left = 0;
-//            beforSpan = 0;
-//            int childHeight = getChildAt(getChildCount() - 1).getHeight();
-//            state.offsetY.add(childHeight);
-//            beforSpan += span;
-//            int right = width + left;
-//            layoutDecoratedWithMargins(view, left, offsetY, right, offsetY + height);
-//            if (beforSpan >= spanCount) {//判断当前换行的item是否屏幕是否还有剩余空间
-//                height = childHeight + height;
-//            } else {
-//                height = childHeight;
-//            }
-//        } else {
-//            int right = width + left;
-//            layoutDecoratedWithMargins(view, left, offsetY, right, offsetY + height);
-//        }
+
 }
