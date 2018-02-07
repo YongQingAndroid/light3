@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.posun.lightui.recyclerview.LightFormAdapterManager;
+import com.posun.lightui.recyclerview.adapter.LightFormAdapterManager;
 
 import qing.com.kotlin3.test.TestGradAdapter;
 import qing.com.kotlin3.test.TestGroupAdapter;

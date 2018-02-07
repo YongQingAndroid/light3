@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.posun.lightui.recyclerview.LightFormAdapterManager;
-import com.posun.lightui.recyclerview.LightRecyclerGroupAdapter;
+import com.posun.lightui.recyclerview.adapter.LightFormAdapterManager;
+import com.posun.lightui.recyclerview.adapter.LightRecyclerGroupAdapter;
 
 import qing.com.kotlin3.R;
 
