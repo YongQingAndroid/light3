@@ -1,4 +1,4 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.lightdefult;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -97,13 +97,20 @@ public class LightGroupRecycler {
         int i = position - 1, span = 0;
         while (i >= 0) {
             span += manager.getItemSpan(i);
-            if (adapter.isGroup(i)) {
+            if (adapter.isGroup(i)) {//
+                break;
+            }
+            if (i > 500) {//防止卡顿向上遍历500如果依旧寻找不到group放弃寻找
+                span = 0;
+                i = Integer.MAX_VALUE;
                 break;
             }
             i--;
         }
         int newspan = manager.spanCount - (span % manager.spanCount);
-        groupUpperSpan.put(position, newspan);
+        if (i != Integer.MAX_VALUE) {
+            groupUpperSpan.put(position, newspan);
+        }
         return newspan;
     }
 
@@ -185,7 +192,7 @@ public class LightGroupRecycler {
      * @param view
      * @return
      */
-    public int getPositionFromGroupView(View view) {
+    public static int getPositionFromGroupView(View view) {
         return ((LightRecyLayoutParams) view.getLayoutParams()).getPosition();
     }
 
@@ -338,6 +345,10 @@ public class LightGroupRecycler {
     public static class GroupHolder extends RecyclerView.ViewHolder {
         public GroupHolder(View itemView) {
             super(itemView);
+        }
+
+        public int getGroupAdapterPosition() {
+            return getPositionFromGroupView(itemView);
         }
     }
 }

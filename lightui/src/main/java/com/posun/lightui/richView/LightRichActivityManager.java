@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.posun.lightui.QlightUnit;
-import com.posun.lightui.recyclerview.LightFormAdapterManager;
+import com.posun.lightui.recyclerview.adapter.LightFormAdapterManager;
 import com.posun.lightui.richView.annotation.LightBtnItem;
 import com.posun.lightui.richView.annotation.LightCheckBox;
 import com.posun.lightui.richView.annotation.LightItemsGroups;

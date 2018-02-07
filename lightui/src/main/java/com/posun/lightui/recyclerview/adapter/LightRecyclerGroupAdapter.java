@@ -1,4 +1,4 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.adapter;
 
 import android.util.Log;
 import android.view.View;

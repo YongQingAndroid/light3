@@ -1,4 +1,4 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.lightdefult;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 /**
- * package light3:com.posun.lightui.recyclerview.LightDefultLayoutManager.class
+ * package light3:com.posun.lightui.recyclerview.lightdefult.LightDefultLayoutManager.class
  * 作者：zyq on 2018/1/31 11:16
  * 邮箱：zyq@posun.com
  */

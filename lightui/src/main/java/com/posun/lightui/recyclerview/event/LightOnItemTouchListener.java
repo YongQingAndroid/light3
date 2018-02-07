@@ -1,4 +1,4 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.event;
 
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.RecyclerView;

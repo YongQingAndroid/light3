@@ -1,10 +1,14 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.posun.lightui.recyclerview.event.LightOnItemTouchListener;
+import com.posun.lightui.recyclerview.android.LightGridLayoutManager;
+import com.posun.lightui.recyclerview.lightdefult.LightDefultLayoutManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -110,10 +114,25 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
     public void setRecyclerView(RecyclerView recyclerView) {
         if (data.size() == 0)
             throw new RuntimeException("必选先添加子适配器");
-        LightGridLayoutManager mLightGridLayoutManager = new LightGridLayoutManager(recyclerView.getContext(), LightFormAdapterManager.this.spanCount);
+        LightDefultLayoutManager mLightGridLayoutManager = new LightDefultLayoutManager(recyclerView.getContext(), LightFormAdapterManager.this.spanCount);
+//        LightGridLayoutManager mLightGridLayoutManager = new LightGridLayoutManager(recyclerView.getContext(), LightFormAdapterManager.this.spanCount);
+
         recyclerView.setLayoutManager(mLightGridLayoutManager);
         recyclerView.setAdapter(this);
-        mLightGridLayoutManager.setSpanSizeLookup(new LightGridLayoutManager.SpanSizeLookup() {
+//        mLightGridLayoutManager.setSpanSizeLookup(new LightGridLayoutManager.SpanSizeLookup() {
+//            @Override
+//            public int getSpanSize(int position) {
+//                LightFormBaseAdapterInterface mLightFormBaseAdapterInterface = getAdapterByPosition(position);
+//                if (mLightFormBaseAdapterInterface instanceof LightRecyclerGridAdapter) {
+//                    return LightFormAdapterManager.this.spanCount / ((LightRecyclerGridAdapter) mLightFormBaseAdapterInterface).spanCount;
+//                } else if (mLightFormBaseAdapterInterface instanceof LightRecyclerListAdapter) {
+//                    return LightFormAdapterManager.this.spanCount;
+//                } else {
+//                    return LightFormAdapterManager.this.spanCount;
+//                }
+//            }
+//        });
+        mLightGridLayoutManager.setSpanSizeLookup(new LightDefultLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 LightFormBaseAdapterInterface mLightFormBaseAdapterInterface = getAdapterByPosition(position);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.android;
 
 import android.content.Context;
 import android.graphics.PointF;

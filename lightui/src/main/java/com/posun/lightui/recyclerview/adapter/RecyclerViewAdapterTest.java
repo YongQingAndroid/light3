@@ -1,4 +1,4 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;

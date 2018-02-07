@@ -1,4 +1,4 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.adapter;
 
 import android.view.ViewGroup;
 
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * package light3:com.posun.lightui.recyclerview.LightTwoDimensionalAdapter.class
+ * package light3:com.posun.lightui.recyclerview.adapter.LightTwoDimensionalAdapter.class
  * 作者：zyq on 2018/1/26 11:33
  * 邮箱：zyq@posun.com
  */

@@ -1,11 +1,11 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.lightdefult;
 
 import android.support.v7.widget.RecyclerView;
 
 import java.lang.reflect.Field;
 
 /**
- * package light3:com.posun.lightui.recyclerview.LightRecyLayoutParams.class
+ * package light3:com.posun.lightui.recyclerview.lightdefult.LightRecyLayoutParams.class
  * 作者：zyq on 2018/2/2 16:02
  * 邮箱：zyq@posun.com
  */

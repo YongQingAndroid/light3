@@ -1,4 +1,4 @@
-package com.posun.lightui.recyclerview;
+package com.posun.lightui.recyclerview.lightdefult;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * package light3:com.posun.lightui.recyclerview.LightChildHelper.class
+ * package light3:com.posun.lightui.recyclerview.lightdefult.LightChildHelper.class
  * 作者：zyq on 2018/2/2 15:30
  * 邮箱：zyq@posun.com
  */
