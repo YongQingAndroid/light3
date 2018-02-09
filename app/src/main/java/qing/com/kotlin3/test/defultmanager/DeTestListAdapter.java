@@ -1,0 +1,66 @@
+package qing.com.kotlin3.test.defultmanager;
+
+import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import com.posun.lightui.recyclerview.adapter.LightFormAdapterManager;
+import qing.com.kotlin3.R;
+
+/**
+ * package Kotlin3:qing.com.kotlin3.test.TestListAdapter.class
+ * 作者：zyq on 2018/1/18 11:15
+ * 邮箱：zyq@posun.com
+ */
+
+public class DeTestListAdapter extends LightFormAdapterManager.LightRecyclerListAdapter {
+    @Override
+    public int getItemCount() {
+        return 30;
+    }
+
+    @Override
+    public int getViewType(int position) {
+        return position % 2;
+    }
+
+    @Override
+    public LightFormAdapterManager.ChildHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_layout, viewGroup, false);
+        if (viewType == 1) {
+            return new TestHolder(view);
+        }
+        return new TestHolder1(view);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewGroup viewGroup, LightFormAdapterManager.ChildHolder holder, int position) {
+        if (holder instanceof TestHolder) {
+            ((TestHolder) holder).textView.setText("" + position);
+        } else {
+            ((TestHolder1) holder).textView.setText("" + position);
+        }
+    }
+
+
+    class TestHolder extends LightFormAdapterManager.ChildHolder {
+        TextView textView;
+
+        public TestHolder(View view) {
+            super(view);
+            textView = view.findViewById(R.id.item_t);
+            textView.setTextColor(Color.BLACK);
+        }
+    }
+
+    class TestHolder1 extends LightFormAdapterManager.ChildHolder {
+        TextView textView;
+
+        public TestHolder1(View view) {
+            super(view);
+            textView = view.findViewById(R.id.item_t);
+            textView.setTextColor(Color.RED);
+        }
+    }
+}

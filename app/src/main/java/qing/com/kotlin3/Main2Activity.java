@@ -11,6 +11,7 @@ import com.posun.lightui.recyclerview.adapter.LightFormAdapterManager;
 import qing.com.kotlin3.test.TestGradAdapter;
 import qing.com.kotlin3.test.TestGroupAdapter;
 import qing.com.kotlin3.test.TestListAdapter;
+import qing.com.kotlin3.test.defultmanager.TestDefultLayoutManagerGroupAdapter;
 
 public class Main2Activity extends AppCompatActivity {
 
@@ -28,7 +29,8 @@ public class Main2Activity extends AppCompatActivity {
         adapterManager.addAdapter(testGradAdapter);
         adapterManager.addAdapter(new TestGradAdapter(4));
         adapterManager.addAdapter(new TestListAdapter());
-        adapterManager.addAdapter(new TestGroupAdapter());
+        adapterManager.addAdapter(new TestDefultLayoutManagerGroupAdapter());
+//        adapterManager.addAdapter(new TestGroupAdapter());
 
         adapterManager.setRecyclerView(recyclerView);
         /**********************************************************/
