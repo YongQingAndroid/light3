@@ -116,7 +116,7 @@ public abstract class LightRecyclerGroupAdapter<G extends LightFormAdapterManage
     public G getGroupViewHolder(int position, LightFormAdapterManager.ChildHolder childHolder, ViewGroup viewGroup) {
         if (childHolder == null) {
             childHolder = onCreateGroupViewHolder(position, viewGroup);
-            Log.d("qing","onCreateGroupViewHolder");
+//            Log.d("qing","onCreateGroupViewHolder");
 //            childHolder.itemView.setOnClickListener(onClickListener);
         }
         onBindGroupViewHolder((G)childHolder, position);

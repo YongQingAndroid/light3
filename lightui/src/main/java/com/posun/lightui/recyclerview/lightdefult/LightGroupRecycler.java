@@ -4,26 +4,74 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.posun.lightui.recyclerview.adapter.LightFormAdapterManager;
+import com.posun.lightui.recyclerview.suspension.SuspensionLayoutParams;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class LightGroupRecycler {
     private List<View> groupCatch = new ArrayList<>();
     private List<View> screenGroupViews = new ArrayList<>();
-    private Map<Integer, Integer> groupUpperSpan = new HashMap<>();
+    private TreeMap<Integer, Integer> groupUpperSpan = new TreeMap<>();
+    private Map<Integer, Integer> itemOtherLineSpan = new HashMap<>();
     private WeakReference<RecyclerView> recyclerView;
     private LightChildHelper lightChildHelper;
+    private NoValueGroupAdapter noValueGroupAdapter;
+    public static final int NOVALUE = Integer.MIN_VALUE;
+
+
+    public View getFistScreenGroupView() {
+        if (screenGroupViews.size() > 0) {
+            return screenGroupViews.get(0);
+        }
+        return null;
+    }
+
+    public int getPreviousGroup(int position, int groupPosition) {
+        if (isGroup(position)) {
+            return position;
+        }
+        if (position >= groupPosition) {
+            return groupPosition;
+        }
+        int previousPosition = -1;
+        if (groupPosition != -1) {
+            SortedMap<Integer, Integer> sortedSet = groupUpperSpan.headMap(groupPosition);
+            if (sortedSet.size() != 0) {
+                previousPosition = sortedSet.lastKey();
+            } else {
+                return Integer.MIN_VALUE;
+            }
+        }
+        return previousPosition;
+    }
+
+    public void setItemOtherLineSpan(int position, int span) {
+        itemOtherLineSpan.put(position, span);
+    }
+
+    public int getItemOtherLineSpan(int position) {
+        Integer integer = itemOtherLineSpan.get(position);
+        return integer == null ? NOVALUE : integer;
+    }
+
+    public void removeItemOtherLineSpan() {
+        itemOtherLineSpan.clear();
+    }
 
     /**
      * @param index
      * @return
      */
     public View getGroupViewAt(int index) {
-        if (index < screenGroupViews.size())
+        if (index >= 0 && index < screenGroupViews.size())
             return screenGroupViews.get(index);
         return null;
     }
@@ -87,16 +135,20 @@ public class LightGroupRecycler {
     }
 
     /***
-     *
      * @param position
      * @param manager
      * @return
      */
     private int tryGetGroupUpperSpan(int position, LightDefultLayoutManager manager) {
-        LightGroupAdapter adapter = getGroupAdapter();
+        LightGroupAdapter adapter = getGroupAdapter(position);
         int i = position - 1, span = 0;
         while (i >= 0) {
-            span += manager.getItemSpan(i);
+            int itemspan = manager.getItemSpan(i);
+            if (itemspan + span > manager.spanCount) {
+                span = itemspan;
+            } else {
+                span += itemspan;
+            }
             if (adapter.isGroup(i)) {//
                 break;
             }
@@ -202,16 +254,48 @@ public class LightGroupRecycler {
      */
     public View getGroupViewForPosition(int position) {
         GroupHolder viewHolder = null;
+        int fictitious = getFictitious(position);//多适配器的虚拟位置
         if (groupCatch.size() > 0) {
             viewHolder = getGroupHolder(groupCatch.get(0));
             groupCatch.remove(0);
         } else {
-            viewHolder = getGroupAdapter().creatGroupHolder(recyclerView.get(), 0);
+            viewHolder = getGroupAdapter(position).creatGroupHolder(recyclerView.get(), 0);
             viewHolder.itemView.setLayoutParams(new LightRecyLayoutParams(viewHolder));
         }
         ((LightRecyLayoutParams) viewHolder.itemView.getLayoutParams()).setPosition(position);
-        getGroupAdapter().onBindGroupHolder(viewHolder, position);
+        getGroupAdapter(position).onBindGroupHolder(viewHolder, fictitious);
         return viewHolder.itemView;
+    }
+
+    /**
+     * @param position
+     * @return
+     */
+    public View getGroupViewForPosition(int position, View view) {
+        GroupHolder viewHolder = null;
+        LightGroupAdapter adapter = getGroupAdapter(position);
+        int fictitious = getFictitious(position);
+        if (view != null) {
+            viewHolder = ((LightRecyLayoutParams) ((SuspensionLayoutParams) view.getLayoutParams()).getOtherLayoutParams()).getGroupViewHolderInt();
+        } else {
+            viewHolder = adapter.creatGroupHolder(recyclerView.get(), 0);
+            viewHolder.itemView.setLayoutParams(new LightRecyLayoutParams(viewHolder));
+        }
+        ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
+        if (layoutParams instanceof SuspensionLayoutParams) {
+            ((LightRecyLayoutParams) ((SuspensionLayoutParams) layoutParams).getOtherLayoutParams()).setPosition(position);
+        } else {
+            ((LightRecyLayoutParams) layoutParams).setPosition(position);
+        }
+        adapter.onBindGroupHolder(viewHolder, fictitious);
+        return viewHolder.itemView;
+    }
+
+    public int getFictitious(int position) {
+        if (adapterManagerReference != null && adapterManagerReference.get() != null) {
+            return adapterManagerReference.get().getChildAdapterPosition(position);
+        }
+        return position;
     }
 
     /**
@@ -222,12 +306,43 @@ public class LightGroupRecycler {
         return ((LightRecyLayoutParams) view.getLayoutParams()).getGroupViewHolderInt();
     }
 
+    public boolean haveGroup() {
+        if (recyclerView.get().getAdapter() instanceof LightFormAdapterManager) {
+            LightFormAdapterManager adapterManager = (LightFormAdapterManager) recyclerView.get().getAdapter();
+            return adapterManager.haveGroup;
+        } else if (recyclerView.get().getAdapter() instanceof LightGroupAdapter) {
+            return true;
+        }
+        return false;
+    }
+
     private WeakReference<LightGroupAdapter> groupAdapter;
+    private WeakReference<LightFormAdapterManager> adapterManagerReference;
+
+
+    public boolean isGroup(int position) {
+        return getGroupAdapter(position).isGroup(getFictitious(position));
+    }
 
     /**
      * @return
      */
-    public LightGroupAdapter getGroupAdapter() {
+    public LightGroupAdapter getGroupAdapter(int position) {
+        if (adapterManagerReference != null || recyclerView.get().getAdapter() instanceof LightFormAdapterManager) {
+            LightFormAdapterManager adapterManager = null;
+            if (adapterManagerReference == null || adapterManagerReference.get() == null) {
+                adapterManagerReference = new WeakReference<>((LightFormAdapterManager) recyclerView.get().getAdapter());
+            }
+            adapterManager = adapterManagerReference.get();
+            Object adapterInterface = adapterManager.getAdapterByPosition(position);
+            if (adapterInterface instanceof LightGroupAdapter) {
+                return (LightGroupAdapter) adapterInterface;
+            }
+            if (noValueGroupAdapter == null) {
+                noValueGroupAdapter = new NoValueGroupAdapter();
+            }
+            return noValueGroupAdapter;
+        }
         if (groupAdapter != null && groupAdapter.get() != null)
             return groupAdapter.get();
         if (recyclerView != null && recyclerView.get() != null) {

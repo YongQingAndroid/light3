@@ -58,10 +58,6 @@ public class LightListViewGroupManager {
                 int pinViewAdapterPosition = getPinViewAdapterPosition(adapterFirstVisibleItem);
                 /**提高滑動速度減少繪製*/
                 if (pinViewAdapterPosition != -1 && beforindex != pinViewAdapterPosition) {
-                    /**
-                     * pin view 被换掉了
-                     */
-//                    mListViewTopGroup.removeAllViews();//犯过的错误已经渲染完成的View其实失去ViewRoot即便从新刷新赋值也不会更新UI（非常重要要记得这个错误）
                     View view = getSectionPinView(pinViewAdapterPosition);
                     if (mViewSectionPin == null || mListViewTopGroup.getChildCount() == 0) {
                         mViewSectionPin = view;
@@ -92,6 +88,7 @@ public class LightListViewGroupManager {
                         if (sectionTop < pinViewHeight && sectionTop > 0) {
                             mSectionPinOffset = sectionTop - pinViewHeight;
                         }
+                        break;
                     }
                 }
                 mListViewTopGroup.invalidate(mSectionPinOffset);

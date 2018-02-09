@@ -26,7 +26,6 @@ public class LightRecyLayoutParams extends RecyclerView.LayoutParams {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
     }
 
     public int getPosition() {
@@ -47,7 +46,6 @@ public class LightRecyLayoutParams extends RecyclerView.LayoutParams {
         }
         return null;
     }
-
     public Field getViewHolderFiled() {
         if (viewHolder == null) {
             try {

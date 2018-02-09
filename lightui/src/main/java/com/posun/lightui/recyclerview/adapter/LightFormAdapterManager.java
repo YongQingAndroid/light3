@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.posun.lightui.recyclerview.event.LightOnItemTouchListener;
-import com.posun.lightui.recyclerview.android.LightGridLayoutManager;
 import com.posun.lightui.recyclerview.lightdefult.LightDefultLayoutManager;
+import com.posun.lightui.recyclerview.lightdefult.LightGroupRecycler;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
     private ViewGroup viewGroup;
     private int spanCount = 1;
     private Context context;
+    public boolean haveGroup = false;
 
     public LightFormAdapterManager(Context context) {
         this.context = context;
@@ -70,7 +71,8 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
         if (viewGroup == null)
             viewGroup = parent;
         ChildHolder childHolder = item.onCreateViewHolder(parent, item.getViewType(resultType)).addOwerFormAdapterManager(this);
-        return new Holder(childHolder, item);
+        childHolder.myLightFormBaseAdapter = item;
+        return childHolder;
     }
 
     /**
@@ -80,6 +82,9 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
      * @return当前对象
      */
     public LightFormAdapterManager addAdapter(LightFormBaseAdapterInterface adapter) {
+        if (adapter instanceof LightGroupRecycler.LightGroupAdapter) {
+            haveGroup = true;
+        }
         adapter.setInstentType(atomicInteger.addAndGet(1));
         if (adapter instanceof LightRecyclerGridAdapter) {
             LightRecyclerGridAdapter mLightGridAdapter = (LightRecyclerGridAdapter) adapter;
@@ -93,18 +98,6 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
         return this;
     }
 
-    /**
-     * 多层递归使用（试验功能慎用 使用场景超过2层多层List嵌套使用）
-     *
-     * @param adapterManager
-     * @return
-     */
-    public LightFormAdapterManager addAdapterManager(LightFormAdapterManager adapterManager) {
-//        if (listAdapterManager == null)
-//            listAdapterManager = new ArrayList<>();
-//        listAdapterManager.add(adapterManager);
-        return this;
-    }
 
     /**
      * 绑定recyclerView 必须在添加自适配器之后才能绑定
@@ -115,23 +108,8 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
         if (data.size() == 0)
             throw new RuntimeException("必选先添加子适配器");
         LightDefultLayoutManager mLightGridLayoutManager = new LightDefultLayoutManager(recyclerView.getContext(), LightFormAdapterManager.this.spanCount);
-//        LightGridLayoutManager mLightGridLayoutManager = new LightGridLayoutManager(recyclerView.getContext(), LightFormAdapterManager.this.spanCount);
-
         recyclerView.setLayoutManager(mLightGridLayoutManager);
         recyclerView.setAdapter(this);
-//        mLightGridLayoutManager.setSpanSizeLookup(new LightGridLayoutManager.SpanSizeLookup() {
-//            @Override
-//            public int getSpanSize(int position) {
-//                LightFormBaseAdapterInterface mLightFormBaseAdapterInterface = getAdapterByPosition(position);
-//                if (mLightFormBaseAdapterInterface instanceof LightRecyclerGridAdapter) {
-//                    return LightFormAdapterManager.this.spanCount / ((LightRecyclerGridAdapter) mLightFormBaseAdapterInterface).spanCount;
-//                } else if (mLightFormBaseAdapterInterface instanceof LightRecyclerListAdapter) {
-//                    return LightFormAdapterManager.this.spanCount;
-//                } else {
-//                    return LightFormAdapterManager.this.spanCount;
-//                }
-//            }
-//        });
         mLightGridLayoutManager.setSpanSizeLookup(new LightDefultLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -164,15 +142,13 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
                     }
                 }
                 ));
-//        GridDivider mDividerItemDecoration=new GridDivider(context,2, Color.BLUE);
-//        recyclerView.addItemDecoration(mDividerItemDecoration);
     }
 
     /**
      * @param position
      * @return根据列表的位置计算子适配器的位置
      */
-    private int getChildAdapterPosition(int position) {
+    public int getChildAdapterPosition(int position) {
         int size = 0;
         for (LightFormBaseAdapterInterface mLightFormBaseAdapter : data) {
             int itemSize = t_size.get(mLightFormBaseAdapter);
@@ -205,7 +181,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
      * @param position
      * @return 获取对应的子适配器
      */
-    private LightFormBaseAdapterInterface getAdapterByPosition(int position) {
+    public LightFormBaseAdapterInterface getAdapterByPosition(int position) {
         int size = 0;
         for (LightFormBaseAdapterInterface mLightFormBaseAdapter : data) {
             int itemSize = t_size.get(mLightFormBaseAdapter);
@@ -241,7 +217,7 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         int arg = getChildAdapterPosition(position);
-        holder.myLightFormBaseAdapter.onBindViewHolder(viewGroup, holder.childHolder, arg);
+        holder.myLightFormBaseAdapter.onBindViewHolder(viewGroup, (ChildHolder) holder, arg);
     }
 
     /**
@@ -257,11 +233,6 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
             size += itemsize;
             t_size.put(item, itemsize);
         }
-//        if (listAdapterManager != null && listAdapterManager.size() > 0) {
-//            for (LightFormAdapterManager itemManager : listAdapterManager) {//此处涉及循环递归
-//                size += itemManager.getItemCount();
-//            }
-//        }
         return size;
     }
 
@@ -269,50 +240,38 @@ public class LightFormAdapterManager extends RecyclerView.Adapter<LightFormAdapt
      * Holder
      */
     static class Holder extends RecyclerView.ViewHolder {
-        LightFormBaseAdapterInterface myLightFormBaseAdapter;
-        ChildHolder childHolder;
+        protected LightFormBaseAdapterInterface myLightFormBaseAdapter;
 
-        public Holder(ChildHolder childHolder, LightFormBaseAdapterInterface myLightFormBaseAdapter) {
-            super(childHolder.itemView);
-            this.childHolder = childHolder;
-            childHolder.addOwerHolder(this);
-            this.myLightFormBaseAdapter = myLightFormBaseAdapter;
+        public Holder(View view) {
+            super(view);
         }
     }
 
     /***
      * 子Holder
      */
-    public static class ChildHolder {
-        protected View itemView;
+    public static class ChildHolder extends Holder {
         private int position = 0;
-        private WeakReference<Holder> mOwnerHolder;
         private WeakReference<LightFormAdapterManager> mOwnerFormAdapterManager;
+        public ChildHolder(View view) {
+            super(view);
+        }
 
         public View getItemView() {
             return itemView;
         }
 
-        public ChildHolder(View view) {
-            this.itemView = view;
-        }
-
-        private ChildHolder addOwerHolder(Holder mholder) {
-            mOwnerHolder = new WeakReference<Holder>(mholder);
-            return this;
-        }
-
         private ChildHolder addOwerFormAdapterManager(LightFormAdapterManager lightFormAdapterManager) {
-            mOwnerFormAdapterManager = new WeakReference<LightFormAdapterManager>(lightFormAdapterManager);
+            mOwnerFormAdapterManager = new WeakReference<>(lightFormAdapterManager);
             return this;
         }
 
         /**
          * @return获取当前视图的position
          */
-        public int getAdapterPosition() {
-            if (mOwnerHolder != null && mOwnerHolder.get() != null && mOwnerFormAdapterManager != null && mOwnerFormAdapterManager.get() != null) {
-                return mOwnerFormAdapterManager.get().getChildAdapterPosition(mOwnerHolder.get().getAdapterPosition());
+        public int getChildHolderPosition() {
+            if (mOwnerFormAdapterManager != null && mOwnerFormAdapterManager.get() != null) {
+                return mOwnerFormAdapterManager.get().getChildAdapterPosition(getAdapterPosition());
             }
             return position;
         }
