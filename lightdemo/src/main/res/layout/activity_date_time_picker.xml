@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+   >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:textColor="#fff"
+        android:text="接口代码"
+        android:gravity="center"
+        android:background="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:id="@+id/title"
+        />
+    <TextView
+        android:id="@+id/msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="#DEDEDE"
+        android:minHeight="50dp"
+        android:padding="10dp"
+        android:visibility="gone" />
+
+    <thereisnospon.codeview.CodeView
+        android:layout_below="@+id/title"
+        android:id="@+id/codeview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_heightPercent="70%"
+        android:padding="10dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="30dp"
+        android:visibility="gone"></thereisnospon.codeview.CodeView>
+
+    <Button
+        android:id="@+id/execut"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimary"
+        android:textColor="#fff"
+        android:text="execut" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="50dp"
+        android:padding="0dp"
+        android:layout_marginRight="10dp"
+        android:src="@android:drawable/ic_dialog_info"
+      />
+</android.support.percent.PercentFrameLayout>

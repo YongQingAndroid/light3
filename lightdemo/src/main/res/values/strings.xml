@@ -1,0 +1,173 @@
+<resources>
+    <string name="app_name">LightDemo</string>
+    <string name="timepicker">
+        * 时间选择器\n
+        package com.posun.lightui.timePicker.PickerViewInterface;\n
+        {\n
+        //默认实例化时间选择器\n
+        MaterialTimePickerLayout m = MaterialTimePickerLayout(this)\n
+        // 构造方法的参数控制年月日的显示效果和顺序\n
+        MaterialTimePickerLayout m = MaterialTimePickerLayout(this,FormatState.MM,FormatState.DD, FormatState.YYYY)\n
+        //创建dialog并将时间选择器添加进去并显示（此处可自行封装）\n
+        LightDialog.MakeDialog(m.view, LightDialog.QGriavty.BOTTOM).show();\n
+        }\n
+        LightDateFormatUtil.java //通用时间处理类可以解析大部分时间格式\n
+        /**\n
+     * 字符串转化为Date\n
+     * @param sourceDate\n
+     * @return\n
+     */\n
+    public static Date praseDateString(String sourceDate) {\n
+        }\n
+        </string>
+    <string name="citypicker">
+         * 地址选择器\n
+        package com.posun.lightui.citypicker.MeterialCityDialog;\n
+        {\n
+        //实例化对象\n
+        MeterialCityDialog dialog=new MeterialCityDialog(activity)\n
+        //刷新数据\n
+        MeterialCityDialog.dataChange();\n
+        dialog.show()}\n
+    </string>
+    <string name="lightOrm">* 对象级数据库，面向对象的数据库存储\n
+ * 自动侦测数据库表字段变化自动升级数据库\n
+ * 查询数据时带有映射关系类型必须为ArrayList或List\n
+ * 优化映射关系数据为异步查询，返回集合对象使用到映射数据时才会触发数据库条件搜索\n
+ * 映射子查询不可用于兼容老数据库表\n
+        (加密版数据库支持sqlcipher AES-256加密需要com.lightormsqlcipher.DBHelper中设置密码)\n
+        package com.lightormsqlcipher.LightOrmHelper;\n
+        (Android内置数据库)\n
+        package com.lightormdatabase.LightOrmHelper;\n
+     //自定表名默认会自动生成表名\n
+    @LightTableName("TextBean")\n
+    public static class TextBean {\n
+        //数据模型的主键（必须包含主键\n
+        @LightPrimaryKey\n
+        private String id;\n
+        private String name;\n
+        //忽略的字段\n
+        @LightIgnore\n
+        private BigDecimal price;\n
+        }\n
+      \n
+         //初始化 \n
+        LightOrmHelper.initSdk(Application); \n
+        //增 \n
+        LightOrmHelper.getInstent().save(textBean); \n
+        LightOrmHelper.getInstent().save(List); \n
+        //刪 \n
+        LightOrmHelper.getInstent().remove(textBean); \n
+        LightOrmHelper.getInstent().remove(List); \n
+        LightOrmHelper.getInstent().remove(TextBean.class);//删除当前表 \n
+        //改 \n
+        LightOrmHelper.getInstent().updata(textBean); \n
+        LightOrmHelper.getInstent().updata(List); \n
+        //查 \n
+        LightOrmHelper.getInstent().query(TextBean.class); \n
+        //带条件的查询 \n
+        LightOrmHelper.getInstent() \n
+                .query(TextBean.class, \n
+                        WhereBulider.creat().where("name=","lisa") \n
+                                .AN("id =","1") \n
+                                .limit(1,10));//实现分页 \n
+        /*****************************兼容原有数据库（非必要情况不建议使用）**************************************/ \n
+        //SQLiteOpenHelper为你原有的数据库\n
+        LightOrmHelper.with(SQLiteOpenHelper).save(textBean,"TableName"); \n
+        LightOrmHelper.with(SQLiteOpenHelper).update(textBean,"TableName",WhereBulider.creat()); \n
+        LightOrmHelper.with(SQLiteOpenHelper).remove("TableName",WhereBulider.creat()); \n
+        LightOrmHelper.with(SQLiteOpenHelper).query(TextBean.class,"TableName"); \n
+        LightOrmHelper.with(SQLiteOpenHelper).query(TextBean.class,"TableName",WhereBulider.creat()); \n
+        LightOrmHelper.with(SQLiteOpenHelper).queryJSON("TableName",WhereBulider.creat()) \n
+          /**\n
+     * 数据库保存在Sdcard\n
+     * 注意数据安全\n
+     * @param context\n
+     * @param isSdCard\n
+     * */\n
+    public DBHelper(Context context,boolean isSdCard) {\n
+        super(context, isSdCard?sdCard:db_name, null, vesion);\n
+        SQLiteDatabase.loadLibs(context);\n
+    }\n
+    </string>
+    <string name="lightHttp">
+        轻量网络框架\n
+        package com.qing.lighthttp;\n
+        注解模式\n
+        @lightWorkThread 网络回调到主线程\n
+    @lightHttpResult("/s/test/{id}/demo.php") 回调的网络URl即你发送网络请求是的URL\n
+    public void getname1(String arg) {\n
+        Log.i("qing", arg);\n
+    }\n
+
+    @lightWorkThread网络回调到子线程\n
+    @lightHttpSteamResult 返回报文是文件\n
+    @lightHttpResult("/s/demo.php")\n
+    public void getFile(File[] arg) {\n
+\n
+    }\n
+
+    @lightWorkThread\n
+    @lightHttpCustomResult(LightFastJsonCover.class)自定义处理返回的报文\n
+    @lightHttpResult("/s/demo.php")\n
+    public void getrsulut(File[] arg) {\n
+    }\n
+\n
+    @lightUIThread\n
+    @lightHttpErr\n 错误的回调
+    public void err(Throwable throwable) {\n
+\n
+    }\n
+        \n
+        \n
+        发送网络请求\n
+         LightHttp.getinstent(this)获取lightHttp对象this为回调注解所在的类\n
+        .setBaseURl("http://")添加BaseURl可以不添加\n
+        .addHeader("key", "value")添加请求头\n
+        .urlPath("{id}", "111111")URl占位符\n
+        .get("/s/test/{id}/demo.php");发送网络请求get或post\n
+\n
+         //全局请求头\n
+        LightHttp.addDefultHeader("key","value");\n
+        //全局BaseURl\n
+        LightHttp.setAppBaseurl("URL");\n
+        LightHttp.simpleRequest(new LightHttp.SimpleCallBack《TestBean》() {常规模式下发起请求泛型表示返回的数据实体\n
+            @Override\n
+            public void call(TestBean obj, String url) {\n
+\n
+            }\n
+\n
+            @Override\n
+            public void err(Throwable throwable, String url) {\n
+
+            }\n
+        })//其他用法与上面相同\n
+        .get("url");\n
+    </string>
+    <string name="calender">
+              LightCalenderView 日历类（带农历）\n
+                 mLightCalenderView.setListener(new LightCalenderView.LightListener() {\n
+                    @Override\n
+                    public void DateChange(DateTime dateTime) {\n
+                        Toast.makeText(activity, dateTime.toString("yyyy-MM-dd"), Toast.LENGTH_SHORT).show();\n
+                    }\n
+\n
+                    @Override\n
+                    public void select(DateTime dateTime) {\n
+                        Toast.makeText(activity, dateTime.toString("yyyy-MM-dd"), Toast.LENGTH_SHORT).show();\n
+                    }\n
+                });</string>
+    <string name="lightActivity"> 启动activity以及在onActivityResult回调的数据\n
+                         LightActivity.with(activity).startforResult(null, new LightActivity.CallBack() {\n
+                         @Override\n
+                         public void call(Intent obj) {\n
+                        \n
+                        }\n
+                          });</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
