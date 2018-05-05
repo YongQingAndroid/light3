@@ -23,7 +23,10 @@ public class LightCalenderView extends LinearLayout {
         super(context, attrs);
         initUi();
     }
-
+    public LightCalenderView(Context context) {
+        super(context);
+        initUi();
+    }
     public boolean isIsmonth() {
         return ismonth;
     }
@@ -41,7 +44,7 @@ public class LightCalenderView extends LinearLayout {
     private void initUi() {
         setOrientation(VERTICAL);
         CalenderTitleView mCalenderTitleView = new CalenderTitleView(getContext());
-        addView(mCalenderTitleView, new LayoutParams(LayoutParams.MATCH_PARENT, 70));
+        addView(mCalenderTitleView, new LayoutParams(LayoutParams.MATCH_PARENT, 150));
         viewPager = new ViewPager(getContext());
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         addView(viewPager, layoutParams);

@@ -28,7 +28,7 @@ public class CalenderManager {
     protected int size = 0, selectpoint = -1;
     protected DateTime selectDate;
     private List<CalenderBean> calenderBeanList;
-    protected boolean ismonth = true;
+    protected boolean ismonth = true,haveLunar=true;
 
     public CalenderManager(String arg) {
         try {
@@ -211,6 +211,12 @@ public class CalenderManager {
         return calenderBeanList;
     }
 
+    /***
+     * 添加月
+     * @param startDate
+     * @param i
+     * @param state
+     */
     private void addList(DateTime startDate, int i, CalenderState state) {
         CalenderBean calenderBean = new CalenderBean();
         calenderBean.setDateTime(startDate.plusDays(i));
@@ -219,6 +225,7 @@ public class CalenderManager {
             selectpoint = calenderBeanList.size();
             calenderBean.setIscheck(true);
         }
+        if(haveLunar)
         calenderBean.setRemark(new Lunar(calenderBean.getDateTime().toCalendar(Locale.CHINA)).getChinaDayString());
         calenderBeanList.add(calenderBean);
     }
@@ -230,6 +237,13 @@ public class CalenderManager {
         return false;
     }
 
+    /***
+     * 添加周
+     * @param startDate
+     * @param i
+     * @param state
+     * @param isweek
+     */
     private void addList(DateTime startDate, int i, CalenderState state, boolean isweek) {
         CalenderBean calenderBean = new CalenderBean();
         calenderBean.setDateTime(startDate.plusDays(i));
@@ -242,6 +256,7 @@ public class CalenderManager {
             selectpoint = calenderBeanList.size();
             calenderBean.setIscheck(true);
         }
+        if(haveLunar)
         calenderBean.setRemark(new Lunar(calenderBean.getDateTime().toCalendar(Locale.CHINA)).getChinaDayString());
         calenderBeanList.add(calenderBean);
     }
