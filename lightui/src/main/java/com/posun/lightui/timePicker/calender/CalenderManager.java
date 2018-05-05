@@ -329,13 +329,15 @@ public class CalenderManager {
                 break;
             case EVENT:
                 break;
+            case LUNAR:
+                helftop = helftop - arg;
+                if (islunar != null&&haveLunar) {
+                    canvas.drawText(islunar, selectx + lunarLeft, y + helftop + 20, paint);
+                }
+                break;
             default:
                 helftop = helftop - arg;
-                if (islunar != null) {
-                    canvas.drawText(islunar, selectx + lunarLeft, y + helftop + 20, paint);
-                } else {
-                    canvas.drawText(item.getLabletext(), x, y + helftop, paint);
-                }
+                canvas.drawText(item.getLabletext(), x, y + helftop, paint);
                 break;
         }
     }
