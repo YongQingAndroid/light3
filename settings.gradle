@@ -1,1 +1,1 @@
-include ':app', ':lightormdatabase', ':lightormhttp', ':lightdatabinding', ':lightormsqlcipher', ':lightui', ':lbsx64', ':lighthttp3.0', ':lightdemo'
+include ':app', ':lightormdatabase', ':lightormhttp', ':lightormsqlcipher', ':lightui', ':lbsx64', ':lighthttp3.0', ':lightdemo', ':lightpermission'

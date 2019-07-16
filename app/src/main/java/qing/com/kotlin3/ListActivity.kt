@@ -37,9 +37,9 @@ class ListActivity : AppCompatActivity() {
                     }
                 }
                 ))
-//        defultLayoutManager.setSpanSizeLookup { position ->
-//            if (position % 5 == 0) 2 else 1
-//        }
+        defultLayoutManager.setSpanSizeLookup { position ->
+            if (position % 5 == 0) 2 else 1
+        }
 //        var mSuspensionManager = SuspensionManager()
 //        mSuspensionManager.setRecyclerView(recyclerview)
         btn.setOnClickListener {

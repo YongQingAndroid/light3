@@ -10,11 +10,12 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/lbsx64" />
-            <option value="$PROJECT_DIR$/lightdatabinding" />
+            <option value="$PROJECT_DIR$/lightdemo" />
             <option value="$PROJECT_DIR$/lighthttp3.0" />
             <option value="$PROJECT_DIR$/lightormdatabase" />
             <option value="$PROJECT_DIR$/lightormhttp" />
             <option value="$PROJECT_DIR$/lightormsqlcipher" />
+            <option value="$PROJECT_DIR$/lightpermission" />
             <option value="$PROJECT_DIR$/lightui" />
           </set>
         </option>

@@ -5,14 +5,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     defaultConfig {
         applicationId "qing.com.kotlin3"
-        minSdkVersion 15
-        targetSdkVersion 26
+        minSdkVersion 20
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -46,7 +45,6 @@ dependencies {
     compile 'org.jetbrains.anko:anko-design:0.9.1'
     compile 'org.jetbrains.anko:anko-recyclerview-v7:0.9.1'
 //    implementation project(':lightormhttp')
-    implementation project(':lightdatabinding')
     implementation project(':lightormdatabase')
     implementation project(':lightui')
 }
