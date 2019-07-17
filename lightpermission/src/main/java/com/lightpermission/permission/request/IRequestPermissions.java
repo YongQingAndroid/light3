@@ -19,4 +19,6 @@ public interface IRequestPermissions {
     boolean requestPermissions(Activity activity, String[] permissions, int resultCode);
 
     boolean requestPermissions(Fragment fragment, Activity activity, String[] permissions, int resultCode);
+
+     boolean requestAllPermission(Activity activity, String[] permissions);
 }

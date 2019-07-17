@@ -51,19 +51,20 @@ public class HookFragment extends android.support.v4.app.Fragment {
     }
 
     //请求权限
-    public void requestPermissions(String[] permissions) {
+    public boolean requestPermissions(String[] permissions) {
         if (ready && permissMap.size() == 0) {
-            realRequestPermissions(permissions);
+            return realRequestPermissions(permissions);
         } else {
             permissMap.put(UUID.randomUUID().toString(), permissions);
             executeTask();
         }
+        return requestPermissions.requestAllPermission(getThisActivity(), permissions);
     }
 
     //请求权限
-    private void realRequestPermissions(String[] permissions) {
+    private boolean realRequestPermissions(String[] permissions) {
         //开始请求权限
-        requestPermissions.requestPermissions(
+        return requestPermissions.requestPermissions(
                 this,
                 getThisActivity(),
                 permissions,

@@ -37,4 +37,5 @@ dependencies {
     implementation project(':lightui')
     implementation project(':lighthttp3.0')
     implementation project(':lightormdatabase')
+    api project(':lightpermission')
 }

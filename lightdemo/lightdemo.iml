@@ -135,6 +135,7 @@
     <orderEntry type="library" scope="TEST" name="Gradle: net.sf.kxml:kxml2:2.3.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.lifecycle:runtime-1.0.0" level="project" />
     <orderEntry type="module" module-name="lighthttp3.0" />
+    <orderEntry type="module" module-name="lightpermission" />
     <orderEntry type="module" module-name="lightormdatabase" />
     <orderEntry type="module" module-name="lightui" />
   </component>

@@ -42,14 +42,13 @@ public class RequestPermissions implements IRequestPermissions {
         //判断并请求权限
         return requestNeedPermission(fragment, activity, permissions, resultCode);
     }
-
-    private boolean requestAllPermission(Activity activity, String[] permissions, int resultCode) {
+    @Override
+    public boolean requestAllPermission(Activity activity, String[] permissions) {
         //判断是否已赋予了全部权限
         boolean isAllGranted = CheckPermission.checkPermissionAllGranted(activity, permissions);
         if (isAllGranted) {
             return true;
         }
-        ActivityCompat.requestPermissions(activity, permissions, resultCode);
         return false;
     }
 
