@@ -37,4 +37,9 @@ public class RequestPermissionsResult implements IRequestPermissionsResult {
         }
         return false;
     }
+
+    @Override
+    public PermissionResult getPermissionResult(Activity activity, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        return null;
+    }
 }

@@ -1,6 +1,5 @@
 package com.lightormdatabase.log;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -64,7 +63,6 @@ public class LightLog {
    /***
     * 获取封装之后的文本
     * */
-    @NonNull
     private static StringBuilder getRichTagString(String arg) {
         StringBuilder stringBuilder = new StringBuilder();
         ShowTopLine(stringBuilder);

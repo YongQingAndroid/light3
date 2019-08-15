@@ -17,8 +17,8 @@ import com.lightpermission.permission.request.RequestPermissions;
 import com.lightpermission.permission.requestresult.IRequestPermissionsResult;
 import com.lightpermission.permission.requestresult.RequestPermissionsResultSetApp;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
-import java.util.UUID;
 
 
 @SuppressLint("ValidFragment")
@@ -28,8 +28,7 @@ public class HookFragment extends android.support.v4.app.Fragment {
     IRequestPermissions requestPermissions = RequestPermissions.getInstance();//动态权限请求
     IRequestPermissionsResult requestPermissionsResult = RequestPermissionsResultSetApp.getInstance();//动态权限请求结果处理
     boolean ready = false;
-    String mapKey = "";
-    LinkedHashMap<String, String[]> permissMap = new LinkedHashMap<>();
+    LinkedHashMap<String, RequestItem> permissMap = new LinkedHashMap<>();
 
     @SuppressLint("ValidFragment")
     HookFragment(Activity activity) {
@@ -51,24 +50,24 @@ public class HookFragment extends android.support.v4.app.Fragment {
     }
 
     //请求权限
-    public boolean requestPermissions(String[] permissions) {
-        if (ready && permissMap.size() == 0) {
-            return realRequestPermissions(permissions);
-        } else {
-            permissMap.put(UUID.randomUUID().toString(), permissions);
+    public boolean requestPermissions(String[] permissions, PermissionCallBack permissionCallBack) {
+        boolean flag = requestPermissions.requestAllPermission(getThisActivity(), permissions);
+        if (!flag) {
+            RequestItem item = new RequestItem(permissionCallBack, permissions);
+            permissMap.put(item.getCallback().toString(), item);
             executeTask();
         }
-        return requestPermissions.requestAllPermission(getThisActivity(), permissions);
+        return flag;
     }
 
     //请求权限
-    private boolean realRequestPermissions(String[] permissions) {
+    private boolean realRequestPermissions(RequestItem requestItem) {
         //开始请求权限
         return requestPermissions.requestPermissions(
                 this,
                 getThisActivity(),
-                permissions,
-                PermissionUtils.ResultCode1);
+                requestItem
+        );
     }
 
     @Override
@@ -80,25 +79,46 @@ public class HookFragment extends android.support.v4.app.Fragment {
 
     public void executeTask() {
         if (ready && permissMap.size() > 0) {
-            mapKey = permissMap.keySet().iterator().next();
+            String mapKey = permissMap.keySet().iterator().next();
             realRequestPermissions(permissMap.get(mapKey));
-            permissMap.remove(mapKey);
+
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        //用户给APP授权的结果
-        //判断grantResults是否已全部授权，如果是，执行相应操作，如果否，提醒开启权限
-        if (requestPermissionsResult.doRequestPermissionsResult(getThisActivity(), permissions, grantResults)) {
-            //请求的权限全部授权成功，此处可以做自己想做的事了
-            //输出授权结果
-            Toast.makeText(getThisActivity(), "授权成功，请重新点击刚才的操作！", Toast.LENGTH_LONG).show();
-        } else {
-            //输出授权结果
-            Toast.makeText(getThisActivity(), "请给APP授权，否则功能无法正常使用！", Toast.LENGTH_LONG).show();
+        RequestItem requestItem = permissMap.get(String.valueOf(requestCode));
+        if (requestItem.getCallback() != null) {
+            requestItem.getCallback().over(requestPermissionsResult.getPermissionResult(getThisActivity(), permissions, grantResults));
         }
+        permissMap.remove(String.valueOf(requestCode));
         executeTask();
+    }
+
+    public static class RequestItem {
+        WeakReference<PermissionCallBack> callback;
+        String[] permissions;
+        int mResultCode;
+
+        RequestItem(PermissionCallBack callback, String[] permissions) {
+            this.permissions = permissions;
+            this.callback = new WeakReference<>(callback);
+            mResultCode = PermissionUtils.getResultCode();
+        }
+
+        public PermissionCallBack getCallback() {
+            if (callback == null)
+                return null;
+            return callback.get();
+        }
+
+        public String[] getPermissions() {
+            return permissions;
+        }
+
+        public int getmResultCode() {
+            return mResultCode;
+        }
     }
 }

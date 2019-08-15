@@ -118,6 +118,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaPrecompile" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/prebuild" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
@@ -170,6 +171,7 @@
     <orderEntry type="library" name="Gradle: org.jetbrains.anko:anko-support-v4:0.9.1@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-core-utils-25.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: net.sf.kxml:kxml2:2.3.0@jar" level="project" />
+    <orderEntry type="module" module-name="lightkeyboard" />
     <orderEntry type="module" module-name="lightormdatabase" />
     <orderEntry type="module" module-name="lightui" />
   </component>

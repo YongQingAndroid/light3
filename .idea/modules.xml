@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/light3.iml" filepath="$PROJECT_DIR$/light3.iml" />
       <module fileurl="file://$PROJECT_DIR$/lightdemo/lightdemo.iml" filepath="$PROJECT_DIR$/lightdemo/lightdemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/lighthttp3.0/lighthttp3.0.iml" filepath="$PROJECT_DIR$/lighthttp3.0/lighthttp3.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lightkeyboard/lightkeyboard.iml" filepath="$PROJECT_DIR$/lightkeyboard/lightkeyboard.iml" />
       <module fileurl="file://$PROJECT_DIR$/lightormdatabase/lightormdatabase.iml" filepath="$PROJECT_DIR$/lightormdatabase/lightormdatabase.iml" />
       <module fileurl="file://$PROJECT_DIR$/lightormhttp/lightormhttp.iml" filepath="$PROJECT_DIR$/lightormhttp/lightormhttp.iml" />
       <module fileurl="file://$PROJECT_DIR$/lightormsqlcipher/lightormsqlcipher.iml" filepath="$PROJECT_DIR$/lightormsqlcipher/lightormsqlcipher.iml" />
